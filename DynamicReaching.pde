@@ -11,11 +11,16 @@ Must be able to maintain precision in 60+ trials.
 
 Serial serialPort;
 double angleDelta;  // this will hold the angle of the chair (output from Arduino)
-double angularVelocity; // the angular velocity from Arduino
+double angularVelocity, angularAcceleration, angularJerk;
+long lastCommandTime;
+int lastCommand;  // store the last command sent
+static final int COMMAND_INTERVAL = 10;  // milliseconds between commands
+static final double EPS = 1e-9;
 
 void setup(){
   size(300,400);
   createGUI();
+  System.out.println("Starting...");
   
   // Look for serial port to open.
   String[] availablePorts = Serial.list();
@@ -35,6 +40,7 @@ void setup(){
   
   angleDelta = 0.0;
   angularVelocity = 0.0;
+  lastCommandTime = millis();
 }
 
 void draw(){
@@ -69,9 +75,102 @@ int sign(int n){
   else return 0;
 }
 
-/* get the sign of a double. Returns one of {-1.0, 0.0, 1.0}. */
+/* Get the sign of a double. Returns one of {-1.0, 0.0, 1.0}. */
 double sign(double n){
   if(n>0.0) return 1.0;
   else if(n<0.0) return -1.0;
   else return 0.0;
+}
+
+/* Spin the chair 180 degrees. Sends motor commands to standard output which should be piped
+    to the actionbot program.
+   Direction specifies direction of spin: positive for clockwise.
+   Speed is the minimum degrees per second at which to rotate the chair. Motor power will be
+   adjusted until the rotation speed equals or exceeds the given speed.
+   Speed will be overridden if the desired speed cannot be achieved with the given acceleration
+   for a 180 degree rotation.
+ */
+int chairMotor = 3;    // actionbot code for chair motor
+int acceleration = 2;
+void spin180(int direction, double speed){
+  resetAngle();
+  int power = 50; // starting power level for chair motor.
+  
+  // busy block to make sure angular velocity is near-zero.
+  while(angularVelocity > 0.5){ }
+  
+  /* Increment power until desired velocity is reached. */
+  double prevVelocity = angularVelocity;  // use to check if accelerating
+  sendCommandF(chairMotor, power);
+  // wait until acceleration is detected
+  while( abs(angularVelocity-prevVelocity) < EPS){
+    prevVelocity = angularVelocity;
+    redraw();
+  }
+  while( (angularVelocity < speed) && (angleDelta < 90) ){
+    // just a precaution...
+    if(power >= 150){
+      sendCommandF(chairMotor, 10);
+      System.err.println("Motor power exceeded safe level.");
+      return;
+    }
+    
+    // don't send a new command if chair is accelerating
+    if( (angularVelocity-prevVelocity) > EPS){
+      prevVelocity = angularVelocity;
+      continue;
+    }
+    else{
+      power += acceleration;
+      sendCommandF(chairMotor, power);
+      // wait until acceleration is detected
+      while( (angularVelocity-prevVelocity) < EPS){
+        prevVelocity = angularVelocity;
+        redraw();
+      }
+    }
+  }
+  
+  // degrees required for deceleration (should be about same as for acceleration)
+  double degs4decel = angleDelta+10;
+  
+  // maintain speed until time to decelerate
+  prevVelocity = angularVelocity;
+  while( angleDelta < (180 - degs4decel) ){
+    // only send command if chair is slowing down
+    if( (angularVelocity-prevVelocity) < -EPS ){
+      sendCommand(chairMotor, power);
+    }
+  }
+  
+  // decelerate
+  while(power > 0 && angleDelta < 180){
+    power -= acceleration;
+    sendCommand(chairMotor, power);
+  }
+  
+  // send brake command
+  sendCommand(chairMotor, 0);
+}
+
+/* Format commands to std out for actionbot program.
+   Keeps track of time since last command to prevent flooding the motor.
+   Returns true when command written, false otherwise.
+   Blocks until some time has passed.
+*/
+boolean sendCommand(int motor, int power){
+  long now = millis();
+  // make sure "enough" time has elapsed since last command time
+  if( (now-lastCommandTime) > COMMAND_INTERVAL ){
+    sendCommandF(motor, power);
+    return true;
+  }
+  return false;
+}
+
+/* Forceful version of sendCommand.  Writes command immediately. */
+void sendCommandF(int motor, int power){
+  System.out.println(String.format("%d %d %d", motor, power, COMMAND_INTERVAL));
+  lastCommand = power;
+  lastCommandTime = millis();
 }
