@@ -11,10 +11,12 @@ Must be able to maintain precision in 60+ trials.
 
 Serial serialPort;
 double angleDelta;  // this will hold the angle of the chair (output from Arduino)
-double angularVelocity, angularAcceleration, angularJerk;
+double angularVelocity;
 long lastCommandTime;
 int lastCommand;  // store the last command sent
-static final int COMMAND_INTERVAL = 10;  // milliseconds between commands
+int power, brake, direction;
+static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
+static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 
 void setup(){
@@ -41,12 +43,15 @@ void setup(){
   angleDelta = 0.0;
   angularVelocity = 0.0;
   lastCommandTime = millis();
+  power = sliderPower.getValueI();
+  brake = csliderBrake.getValueI();
+  direction = CLOCKWISE;
 }
 
 void draw(){
   background(255);
   fill(255,0,0);
-  txtArea.setText(String.format("%.3f\n%.3f",angleDelta,angularVelocity));
+  labelDisplay.setText(String.format("%.3f\n%.3f",angleDelta,angularVelocity));
 }
 
 /* Update angleDelta and angularVelocity whenever data is available on the serial port. */
@@ -90,27 +95,31 @@ double sign(double n){
    Speed will be overridden if the desired speed cannot be achieved with the given acceleration
    for a 180 degree rotation.
  */
-int chairMotor = 3;    // actionbot code for chair motor
-int acceleration = 2;
-void spin180(int direction, double speed){
+void spin180(int direction){
   resetAngle();
-  int power = 50; // starting power level for chair motor.
   
-  // busy block to make sure angular velocity is near-zero.
-  while(angularVelocity > 0.5){ }
+  // Do nothing if chair not stationary.
+  if(angularVelocity > 1.0){ 
+    System.err.println("Chair not stationary. Refusing to spin.");
+    return;
+  }
   
-  /* Increment power until desired velocity is reached. */
+  // Send initial command to start moving.
   double prevVelocity = angularVelocity;  // use to check if accelerating
-  sendCommandF(chairMotor, power);
-  // wait until acceleration is detected
-  while( abs(angularVelocity-prevVelocity) < EPS){
+  sendCommandF(power);
+  
+  // Wait until acceleration is detected.
+  while( Math.abs(angularVelocity-prevVelocity) < EPS){
     prevVelocity = angularVelocity;
     redraw();
   }
-  while( (angularVelocity < speed) && (angleDelta < 90) ){
+  
+  // Re-apply power as needed until chair has rotated "almost" 180.
+  // This is adjusted by the brake slider.
+  while(angleDelta < (180-brake)){
     // just a precaution...
     if(power >= 150){
-      sendCommandF(chairMotor, 10);
+      sendCommandF(10);
       System.err.println("Motor power exceeded safe level.");
       return;
     }
@@ -121,36 +130,11 @@ void spin180(int direction, double speed){
       continue;
     }
     else{
-      power += acceleration;
-      sendCommandF(chairMotor, power);
-      // wait until acceleration is detected
-      while( (angularVelocity-prevVelocity) < EPS){
-        prevVelocity = angularVelocity;
-        redraw();
-      }
+      sendCommand(power);
     }
   }
-  
-  // degrees required for deceleration (should be about same as for acceleration)
-  double degs4decel = angleDelta+10;
-  
-  // maintain speed until time to decelerate
-  prevVelocity = angularVelocity;
-  while( angleDelta < (180 - degs4decel) ){
-    // only send command if chair is slowing down
-    if( (angularVelocity-prevVelocity) < -EPS ){
-      sendCommand(chairMotor, power);
-    }
-  }
-  
-  // decelerate
-  while(power > 0 && angleDelta < 180){
-    power -= acceleration;
-    sendCommand(chairMotor, power);
-  }
-  
   // send brake command
-  sendCommand(chairMotor, 0);
+  sendCommand(10);
 }
 
 /* Format commands to std out for actionbot program.
@@ -158,19 +142,25 @@ void spin180(int direction, double speed){
    Returns true when command written, false otherwise.
    Blocks until some time has passed.
 */
-boolean sendCommand(int motor, int power){
+boolean sendCommand(int power){
   long now = millis();
   // make sure "enough" time has elapsed since last command time
   if( (now-lastCommandTime) > COMMAND_INTERVAL ){
-    sendCommandF(motor, power);
+    sendCommandF(power);
     return true;
   }
   return false;
 }
 
 /* Forceful version of sendCommand.  Writes command immediately. */
-void sendCommandF(int motor, int power){
-  System.out.println(String.format("%d %d %d", motor, power, COMMAND_INTERVAL));
+static final int CHAIR_MOTOR = 3;    // actionbot code for chair motor
+void sendCommandF(int power){
+  System.out.println(String.format("%d %d %d", CHAIR_MOTOR, power, COMMAND_INTERVAL));
   lastCommand = power;
   lastCommandTime = millis();
+}
+
+/* Send the shutdown signal to motors at program close. */
+void stop(){
+  System.out.println("-1 -1 -1");
 }
