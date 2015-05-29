@@ -20,7 +20,7 @@ static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 
 void setup(){
-  size(300,400);
+  size(600,400);
   createGUI();
   System.out.println("Starting...");
   
@@ -43,7 +43,7 @@ void setup(){
   angleDelta = 0.0;
   angularVelocity = 0.0;
   lastCommandTime = millis();
-  power = sliderPower.getValueI();
+  power = csliderPower.getValueI();
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
   
@@ -103,14 +103,14 @@ double sign(double n){
    Speed will be overridden if the desired speed cannot be achieved with the given acceleration
    for a 180 degree rotation.
  */
-void spin180(int direction){
+boolean spin180(int direction){
   resetAngle();
   int command = power*direction;
   
   // Do nothing if chair not stationary.
   if(angularVelocity > 1.0){ 
     System.err.println("Chair not stationary. Refusing to spin.");
-    return;
+    return false;
   }
   
   double prevVelocity = angularVelocity;  // use to check if accelerating
@@ -131,7 +131,7 @@ void spin180(int direction){
     if(power >= 150){
       sendCommandF(0);
       System.err.println("Motor power exceeded safe level.");
-      return;
+      return false;
     }
     
     // don't send a new command if chair is accelerating
@@ -145,6 +145,7 @@ void spin180(int direction){
   }
   // send brake command
   sendCommand(0);
+  return true;
 }
 
 /* Format commands to std out for actionbot program.
