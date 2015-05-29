@@ -46,6 +46,14 @@ void setup(){
   power = sliderPower.getValueI();
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
+  
+  // Send shutdown commands to motor on exit.
+  Thread exitHook = new Thread(){
+    public void run(){
+      System.out.println("-1 0 10");
+    }
+  };
+  Runtime.getRuntime().addShutdownHook(exitHook);
 }
 
 void draw(){
@@ -160,10 +168,4 @@ void sendCommandF(int power){
   System.out.println(String.format("%d %d %d", CHAIR_MOTOR, power, COMMAND_INTERVAL));
   lastCommand = power;
   lastCommandTime = millis();
-}
-
-/* Send the shutdown signal to motors at program close. */
-void exit(){
-  System.out.println("-1 -1 -1");
-  super.exit();
 }
