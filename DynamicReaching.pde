@@ -80,9 +80,15 @@ void serialEvent(Serial s){
 }
 
 /* Sends command to reset Arduino's angle_delta value. */
-void resetAngle(){
+void resetDelta(){
   if(serialPort==null) return;
   serialPort.write("0\n");
+}
+
+/* Sends command to reset Arduino's angle_position value. */
+void resetPosition(){
+  if(serialPort==null) return;
+  serialPort.write("1\n");
 }
 
 /* Get the sign of an int.  Returns one of {-1,0,1}. */
@@ -108,7 +114,7 @@ double sign(double n){
    for a 180 degree rotation.
  */
 boolean spin180(int direction){
-  resetAngle();
+  resetDelta();
   int command = power*direction;
   
   // Do nothing if chair not stationary.
@@ -156,7 +162,7 @@ boolean spin180(int direction){
     Note that there is a floor to the number of degrees the chair can spin.
 */
 boolean spin(int degrees, int direction){
-  resetAngle();
+  resetDelta();
   int command = power*direction;
   
   // Do nothing if chair not stationary.
