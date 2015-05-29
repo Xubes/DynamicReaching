@@ -10,6 +10,7 @@ Must be able to maintain precision in 60+ trials.
 */
 
 Serial serialPort;
+double anglePosition;
 double angleDelta;  // this will hold the angle of the chair (output from Arduino)
 double angularVelocity;
 long lastCommandTime;
@@ -40,6 +41,7 @@ void setup(){
   // Set serial port to buffer until newline.
   serialPort.bufferUntil(10);
   
+  anglePosition = 0.0;
   angleDelta = 0.0;
   angularVelocity = 0.0;
   lastCommandTime = millis();
@@ -59,7 +61,7 @@ void setup(){
 void draw(){
   background(255);
   fill(255,0,0);
-  labelDisplay.setText(String.format("%.3f\n%.3f",angleDelta,angularVelocity));
+  labelDisplay.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f",anglePosition, angleDelta,angularVelocity));
 }
 
 /* Update angleDelta and angularVelocity whenever data is available on the serial port. */
@@ -67,8 +69,9 @@ void serialEvent(Serial s){
   String str = trim(s.readString());
   String[] tokens = splitTokens(str,",");
   try{
-    angleDelta = Double.parseDouble(tokens[0]);
-    angularVelocity = Double.parseDouble(tokens[1]);
+    anglePosition = Double.parseDouble(tokens[0]);
+    angleDelta = Double.parseDouble(tokens[1]);
+    angularVelocity = Double.parseDouble(tokens[2]);
   }
   catch(Exception e){
     System.err.println("Unable to parse input : " + str);
