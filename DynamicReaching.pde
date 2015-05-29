@@ -15,7 +15,7 @@ double angleDelta;  // this will hold the angle of the chair (output from Arduin
 double angularVelocity;
 long lastCommandTime;
 int lastCommand;  // store the last command sent
-int power, brake, direction;
+int power, brake, direction, degrees2rotate;
 static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
@@ -61,7 +61,8 @@ void setup(){
 void draw(){
   background(255);
   fill(255,0,0);
-  labelDisplay.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f",anglePosition, angleDelta,angularVelocity));
+  labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f",anglePosition, angleDelta,angularVelocity));
+  labelDisplay.setText(String.format("Direction: %s",(direction==1)? "CW" : "CCW"));
 }
 
 /* Update angleDelta and angularVelocity whenever data is available on the serial port. */
@@ -130,6 +131,54 @@ boolean spin180(int direction){
   // Re-apply power as needed until chair has rotated "almost" 180.
   // This is adjusted by the brake slider.
   while(angleDelta < (180-brake)){
+    // just a precaution...
+    if(power >= 150){
+      sendCommandF(0);
+      System.err.println("Motor power exceeded safe level.");
+      return false;
+    }
+    
+    // don't send a new command if chair is accelerating
+    if( (angularVelocity-prevVelocity) > EPS){
+      prevVelocity = angularVelocity;
+      continue;
+    }
+    else{
+      sendCommand(command);
+    }
+  }
+  // send brake command
+  sendCommand(0);
+  return true;
+}
+
+/* The generalized version of spin180 for other degree settings.
+    Note that there is a floor to the number of degrees the chair can spin.
+*/
+boolean spin(int degrees, int direction){
+  resetAngle();
+  int command = power*direction;
+  
+  // Do nothing if chair not stationary.
+  if(angularVelocity > 1.0){ 
+    System.err.println("Chair not stationary. Refusing to spin.");
+    return false;
+  }
+  
+  double prevVelocity = angularVelocity;  // use to check if accelerating
+  
+  // Send initial command to start moving.
+  sendCommandF(command);
+  
+  // Wait until acceleration is detected.
+  while( Math.abs(angularVelocity-prevVelocity) < EPS){
+    prevVelocity = angularVelocity;
+    redraw();
+  }
+  
+  // Re-apply power as needed until chair has rotated "almost" 180.
+  // This is adjusted by the brake slider.
+  while(angleDelta < (degrees-brake)){
     // just a precaution...
     if(power >= 150){
       sendCommandF(0);
