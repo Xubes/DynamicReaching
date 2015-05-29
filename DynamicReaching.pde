@@ -97,6 +97,7 @@ double sign(double n){
  */
 void spin180(int direction){
   resetAngle();
+  int command = power*direction;
   
   // Do nothing if chair not stationary.
   if(angularVelocity > 1.0){ 
@@ -104,9 +105,10 @@ void spin180(int direction){
     return;
   }
   
-  // Send initial command to start moving.
   double prevVelocity = angularVelocity;  // use to check if accelerating
-  sendCommandF(power);
+  
+  // Send initial command to start moving.
+  sendCommandF(command);
   
   // Wait until acceleration is detected.
   while( Math.abs(angularVelocity-prevVelocity) < EPS){
@@ -119,7 +121,7 @@ void spin180(int direction){
   while(angleDelta < (180-brake)){
     // just a precaution...
     if(power >= 150){
-      sendCommandF(10);
+      sendCommandF(0);
       System.err.println("Motor power exceeded safe level.");
       return;
     }
@@ -130,11 +132,11 @@ void spin180(int direction){
       continue;
     }
     else{
-      sendCommand(power);
+      sendCommand(command);
     }
   }
   // send brake command
-  sendCommand(10);
+  sendCommand(0);
 }
 
 /* Format commands to std out for actionbot program.
@@ -161,6 +163,7 @@ void sendCommandF(int power){
 }
 
 /* Send the shutdown signal to motors at program close. */
-void stop(){
+void exit(){
   System.out.println("-1 -1 -1");
+  super.exit();
 }

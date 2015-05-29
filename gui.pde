@@ -22,6 +22,7 @@ public void btnResetClick(GButton source, GEvent event) { //_CODE_:btnReset:9334
 public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123:
   //println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
   spin180(direction);
+  direction *= -1;  // next spin will go in opposite direction
 } //_CODE_:btnSpin:521123:
 
 public void sliderPowerChange(GSlider source, GEvent event) { //_CODE_:sliderPower:201978:
@@ -61,7 +62,7 @@ public void createGUI(){
   sliderPower.setShowValue(true);
   sliderPower.setShowLimits(true);
   sliderPower.setLimits(65, 65, 100);
-  sliderPower.setNbrTicks(7);
+  sliderPower.setNbrTicks(9);
   sliderPower.setShowTicks(true);
   sliderPower.setNumberFormat(G4P.INTEGER, 0);
   sliderPower.setOpaque(false);
