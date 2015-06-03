@@ -10,9 +10,9 @@ Must be able to maintain precision in 60+ trials.
 */
 
 Serial serialPort;
-double anglePosition;
-double angleDelta;  // this will hold the angle of the chair (output from Arduino)
-double angularVelocity;
+double anglePosition;  // angle position from Arduino
+double angleDelta;  // absolute degrees rotation since last reset, from Arduino
+double angularVelocity;  // velocity from Arduino
 long lastCommandTime;
 int lastCommand;  // store the last command sent
 int power, brake, direction, degrees2rotate;
@@ -114,58 +114,24 @@ double sign(double n){
    for a 180 degree rotation.
  */
 boolean spin180(int direction){
-  resetDelta();
-  int command = power*direction;
-  
-  // Do nothing if chair not stationary.
-  if(angularVelocity > 1.0){ 
-    System.err.println("Chair not stationary. Refusing to spin.");
-    return false;
-  }
-  
-  double prevVelocity = angularVelocity;  // use to check if accelerating
-  
-  // Send initial command to start moving.
-  sendCommandF(command);
-  
-  // Wait until acceleration is detected.
-  while( Math.abs(angularVelocity-prevVelocity) < EPS){
-    prevVelocity = angularVelocity;
-    redraw();
-  }
-  
-  // Re-apply power as needed until chair has rotated "almost" 180.
-  // This is adjusted by the brake slider.
-  while(angleDelta < (180-brake)){
-    // just a precaution...
-    if(power >= 150){
-      sendCommandF(0);
-      System.err.println("Motor power exceeded safe level.");
-      return false;
-    }
-    
-    // don't send a new command if chair is accelerating
-    if( (angularVelocity-prevVelocity) > EPS){
-      prevVelocity = angularVelocity;
-      continue;
-    }
-    else{
-      sendCommand(command);
-    }
-  }
-  // send brake command
-  sendCommand(0);
-  return true;
+  return spin(180,direction);
 }
 
 /* The generalized version of spin180 for other degree settings.
-    Note that there is a floor to the number of degrees the chair can spin.
+    Note that there is a lower limit to the number of degrees the chair can spin.
 */
 boolean spin(int degrees, int direction){
-  resetDelta();
+  // Command to motor; magnitude is power, sign is direction.
   int command = power*direction;
   
-  // Do nothing if chair not stationary.
+  // Set start position and initialize distance variable.
+  double startPosition = anglePosition;
+  double distance = abs(anglePosition-startPosition);
+  
+  // Reset total rotation counter
+  resetDelta();
+  
+  // Do nothing if chair not stationary.  Return false.
   if(angularVelocity > 1.0){ 
     System.err.println("Chair not stationary. Refusing to spin.");
     return false;
@@ -184,7 +150,8 @@ boolean spin(int degrees, int direction){
   
   // Re-apply power as needed until chair has rotated "almost" 180.
   // This is adjusted by the brake slider.
-  while(angleDelta < (degrees-brake)){
+  while(distance < (degrees-brake)){
+    distance = abs(anglePosition-startPosition);
     // just a precaution...
     if(power >= 150){
       sendCommandF(0);
@@ -202,7 +169,7 @@ boolean spin(int degrees, int direction){
     }
   }
   // send brake command
-  sendCommand(0);
+  //sendCommand(0);
   return true;
 }
 
@@ -227,4 +194,9 @@ void sendCommandF(int power){
   System.out.println(String.format("%d %d %d", CHAIR_MOTOR, power, COMMAND_INTERVAL));
   lastCommand = power;
   lastCommandTime = millis();
+}
+
+/* Absolute value function for doubles. Just calls Math.abs() */
+double abs(double x){
+  return Math.abs(x);
 }
