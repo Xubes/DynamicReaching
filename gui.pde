@@ -88,7 +88,7 @@ public void createGUI(){
   buttonReverse.setText("Reverse");
   buttonReverse.addEventHandler(this, "buttonReverseClick");
   dropListAngles = new GDropList(this, 460, 20, 70, 210, 6);
-  dropListAngles.setItems(loadStrings("list_867680"), 0);
+  dropListAngles.setItems(loadStrings("list_867680"), 2);
   dropListAngles.setLocalColorScheme(GCScheme.CYAN_SCHEME);
   dropListAngles.addEventHandler(this, "dropListAnglesClicked");
   labelPowerSlider = new GLabel(this, 270, 300, 70, 20);
