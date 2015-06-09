@@ -16,11 +16,11 @@ double angleDelta;  // absolute degrees rotation since last reset, from Arduino
 double angularVelocity;  // velocity from Arduino
 long lastCommandTime;
 int lastCommand;  // store the last command sent
-int power, brake, direction, degrees2rotate;
+int power, brake, direction, degrees2Rotate;
 static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
-int[] angles = {160, 180, 200};  // degrees to use for generating trials
+int[] angles = {180, 140, 220};  // degrees to use for generating trials
 int trialsPerBlock = 8;  // number of rotations (each direction) per block
 LinkedList<Trial> trials2Run;  // list of trials
 ListIterator<Trial> li;
@@ -56,9 +56,9 @@ void setup(){
   power = csliderPower.getValueI();
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
-  degrees2rotate = angles[0];
+  degrees2Rotate = angles[0];
   try{
-    output = new PrintWriter("Desktop/DynamicReaching.txt");
+    output = new PrintWriter("DynamicReaching.txt");
   }
   catch(FileNotFoundException e){
     System.err.println(e);
@@ -81,6 +81,9 @@ void draw(){
   String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
   if(currentTrial!=null){
     displayStr += String.format("\nTrial:\t%d, %d", currentTrial.degrees, currentTrial.direction);
+  }
+  else{
+    displayStr += "\n" + degrees2Rotate;
   }
   labelDisplay.setText(displayStr);
 }

@@ -24,16 +24,16 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
   long startTime = millis();
   double startPosition = anglePosition;
   long duration = millis()-startTime;
-  double avgVelocity = abs( (anglePosition-startPosition)/(millis()-startTime));
-  if(currentTrial!=null){
-    if(direction==currentTrial.direction){
-      currentTrial.speedToward = avgVelocity;
+  if(spin(degrees2Rotate,direction)){
+    double avgVelocity = 1000 * Math.abs( (anglePosition-startPosition)/(millis()-startTime));
+    if(currentTrial!=null){
+      if(direction==currentTrial.direction){
+        currentTrial.speedToward = avgVelocity;
+      }
+      else{
+        currentTrial.speedReturn = avgVelocity;
+      }
     }
-    else{
-      currentTrial.speedReturn = avgVelocity;
-    }
-  }
-  if(spin(degrees2rotate,direction)){
     direction *= -1;  // next spin will go in opposite direction
   }
 } //_CODE_:btnSpin:521123:
@@ -67,6 +67,8 @@ public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:bt
   */
   li = trials2Run.listIterator();
   currentTrial = li.next();
+  degrees2Rotate = currentTrial.degrees;
+  direction = currentTrial.direction;
   source.setEnabled(false);
   //println("btnGenerateTrials - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnGenerateTrials:224544:
@@ -75,6 +77,8 @@ public void btnNextTrialClick(GButton source, GEvent event) { //_CODE_:btnNextTr
   if(currentTrial!=null){
     output.println(currentTrial);
     currentTrial = li.next();
+    degrees2Rotate = currentTrial.degrees;
+    direction = currentTrial.direction;
   }
   //println("btnNextTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnNextTrial:908733:
