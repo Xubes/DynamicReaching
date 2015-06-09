@@ -36,11 +36,6 @@ public void buttonReverseClick(GButton source, GEvent event) { //_CODE_:buttonRe
   //println("buttonReverse - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:buttonReverse:305135:
 
-public void dropListAnglesClicked(GDropList source, GEvent event) { //_CODE_:dropListAngles:867680:
-  degrees2rotate = Integer.parseInt(source.getSelectedText());
-  //println("dropList1 - GDropList >> GEvent." + event + " @ " + millis());
-} //_CODE_:dropListAngles:867680:
-
 public void csliderPowerChange(GCustomSlider source, GEvent event) { //_CODE_:csliderPower:301311:
   power = source.getValueI();
   //println("custom_slider1 - GCustomSlider >> GEvent." + event + " @ " + millis());
@@ -50,6 +45,16 @@ public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:bu
   resetPosition();
   //println("buttonResetPosition - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:buttonResetPosition:614711:
+
+public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:btnGenerateTrials:224544:
+  trials2Run = generateTrials(angles, trialsPerBlock);
+  for(Trial trial : trials2Run){
+    System.out.println(trial);
+  }
+  trialIdx = 0;
+  source.setEnabled(false);
+  //println("btnGenerateTrials - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnGenerateTrials:224544:
 
 
 
@@ -87,10 +92,6 @@ public void createGUI(){
   buttonReverse = new GButton(this, 270, 330, 70, 50);
   buttonReverse.setText("Reverse");
   buttonReverse.addEventHandler(this, "buttonReverseClick");
-  dropListAngles = new GDropList(this, 460, 20, 70, 210, 6);
-  dropListAngles.setItems(loadStrings("list_867680"), 2);
-  dropListAngles.setLocalColorScheme(GCScheme.CYAN_SCHEME);
-  dropListAngles.addEventHandler(this, "dropListAnglesClicked");
   labelPowerSlider = new GLabel(this, 270, 300, 70, 20);
   labelPowerSlider.setText("Power");
   labelPowerSlider.setLocalColorScheme(GCScheme.GREEN_SCHEME);
@@ -112,11 +113,16 @@ public void createGUI(){
   csliderPower.setOpaque(true);
   csliderPower.addEventHandler(this, "csliderPowerChange");
   labelDisplay = new GLabel(this, 40, 210, 210, 110);
+  labelDisplay.setText("Hi.");
   labelDisplay.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
   labelDisplay.setOpaque(true);
   buttonResetPosition = new GButton(this, 40, 20, 100, 50);
   buttonResetPosition.setText("Reset Position");
   buttonResetPosition.addEventHandler(this, "buttonResetPositionClick");
+  btnGenerateTrials = new GButton(this, 467, 89, 108, 39);
+  btnGenerateTrials.setText("Generate Trials");
+  btnGenerateTrials.setTextBold();
+  btnGenerateTrials.addEventHandler(this, "btnGenerateTrialsClicked");
 }
 
 // Variable declarations 
@@ -126,10 +132,10 @@ GButton btnSpin;
 GLabel labelSensorInfo; 
 GCustomSlider csliderBrake; 
 GButton buttonReverse; 
-GDropList dropListAngles; 
 GLabel labelPowerSlider; 
 GLabel labelBrakeSlider; 
 GCustomSlider csliderPower; 
 GLabel labelDisplay; 
 GButton buttonResetPosition; 
+GButton btnGenerateTrials; 
 

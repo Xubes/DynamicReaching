@@ -1,6 +1,6 @@
 import g4p_controls.*;
 import processing.serial.*;
-
+import java.util.*;
 /*
 Master control program for Dynamic Reaching task.  Reads sensor data from Arduino sensor
 on the axel of a rotating chair and uses it to precisely rotate a the chair 180 degrees.
@@ -19,6 +19,10 @@ int power, brake, direction, degrees2rotate;
 static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
+int[] angles = {160, 180, 200};  // degrees to use for generating trials
+int trialsPerBlock = 8;  // number of rotations (each direction) per block
+ArrayList<Trial> trials2Run;  // list of trials
+int trialIdx;  // reference to index of current trial in list
 
 void setup(){
   size(600,400);
@@ -36,6 +40,7 @@ void setup(){
   if(serialPort==null){
     System.err.println("Unable to open Serial port!");
     exit();
+    return;
   }
   
   // Set serial port to buffer until newline.
@@ -48,6 +53,9 @@ void setup(){
   power = csliderPower.getValueI();
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
+  degrees2rotate = angles[0];
+  trialIdx = -1;
+  //trials2Run = new int[angles.length*trialsPerBlock*2][2];
   
   // Send shutdown commands to motor on exit.
   Thread exitHook = new Thread(){
@@ -62,7 +70,11 @@ void draw(){
   background(255);
   fill(255,0,0);
   labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f",anglePosition, angleDelta,angularVelocity));
-  labelDisplay.setText(String.format("Direction: %s",(direction==1)? "CW" : "CCW"));
+  String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
+  if(trialIdx>=0){
+    displayStr += String.format("\nTrial:\t%s", trials2Run.get(trialIdx));
+  }
+  labelDisplay.setText(displayStr);
 }
 
 /* Update angleDelta and angularVelocity whenever data is available on the serial port. */
@@ -199,4 +211,36 @@ void sendCommandF(int power){
 /* Absolute value function for doubles. Just calls Math.abs() */
 double abs(double x){
   return Math.abs(x);
+}
+
+/* Generate trials array.  Returns a list of trial objects.
+   Args: angles - the list of angles; trials - the number of trials in each direction per angle. 
+   */
+ArrayList<Trial> generateTrials(int angles[], int trials){
+  ArrayList<Trial> myTrials = new ArrayList<Trial>(angles.length*trials*2);
+  for(int angle : angles){
+    for(int i=0; i<trials; i++){
+      myTrials.add(new Trial(angle, CLOCKWISE));
+      myTrials.add(new Trial(angle, COUNTERCLOCKWISE));
+    }
+  }
+  
+  Collections.shuffle(myTrials);
+  Collections.shuffle(myTrials);
+  
+  return myTrials;  
+}
+
+/* Class to hold information about each trial.  For now the degrees turn and direction of turn. */
+public class Trial{
+  public int degrees, turnDirection;  // don't care if outside can read/write
+  
+  public Trial(int degrees, int direction){
+    this.degrees = degrees;
+    this.turnDirection = direction;
+  }
+  
+  public String toString(){
+    return degrees+","+turnDirection;
+  }
 }
