@@ -1,6 +1,7 @@
 import g4p_controls.*;
 import processing.serial.*;
 import java.util.*;
+import java.io.*;
 /*
 Master control program for Dynamic Reaching task.  Reads sensor data from Arduino sensor
 on the axel of a rotating chair and uses it to precisely rotate a the chair 180 degrees.
@@ -21,8 +22,10 @@ static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 int[] angles = {160, 180, 200};  // degrees to use for generating trials
 int trialsPerBlock = 8;  // number of rotations (each direction) per block
-ArrayList<Trial> trials2Run;  // list of trials
-int trialIdx;  // reference to index of current trial in list
+LinkedList<Trial> trials2Run;  // list of trials
+ListIterator<Trial> li;
+Trial currentTrial;  // reference to index of current trial in list
+static PrintWriter output;
 
 void setup(){
   size(600,400);
@@ -54,13 +57,18 @@ void setup(){
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
   degrees2rotate = angles[0];
-  trialIdx = -1;
-  //trials2Run = new int[angles.length*trialsPerBlock*2][2];
+  try{
+    output = new PrintWriter("Desktop/DynamicReaching.txt");
+  }
+  catch(FileNotFoundException e){
+    System.err.println(e);
+  }
   
   // Send shutdown commands to motor on exit.
   Thread exitHook = new Thread(){
     public void run(){
       System.out.println("-1 0 10");
+      if(output!=null) output.close();
     }
   };
   Runtime.getRuntime().addShutdownHook(exitHook);
@@ -71,8 +79,8 @@ void draw(){
   fill(255,0,0);
   labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f",anglePosition, angleDelta,angularVelocity));
   String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
-  if(trialIdx>=0){
-    displayStr += String.format("\nTrial:\t%s", trials2Run.get(trialIdx));
+  if(currentTrial!=null){
+    displayStr += String.format("\nTrial:\t%d, %d", currentTrial.degrees, currentTrial.direction);
   }
   labelDisplay.setText(displayStr);
 }
@@ -216,8 +224,9 @@ double abs(double x){
 /* Generate trials array.  Returns a list of trial objects.
    Args: angles - the list of angles; trials - the number of trials in each direction per angle. 
    */
-ArrayList<Trial> generateTrials(int angles[], int trials){
-  ArrayList<Trial> myTrials = new ArrayList<Trial>(angles.length*trials*2);
+LinkedList<Trial> generateTrials(int angles[], int trials){
+  LinkedList<Trial> myTrials = new LinkedList<Trial>();
+
   for(int angle : angles){
     for(int i=0; i<trials; i++){
       myTrials.add(new Trial(angle, CLOCKWISE));
@@ -228,19 +237,25 @@ ArrayList<Trial> generateTrials(int angles[], int trials){
   Collections.shuffle(myTrials);
   Collections.shuffle(myTrials);
   
+  // Set ordinal for each trial (the trial number).
+  int ctr = 1;
+  for(Trial t : myTrials){
+    t.ordinal = ctr++;
+  }
   return myTrials;  
 }
 
 /* Class to hold information about each trial.  For now the degrees turn and direction of turn. */
 public class Trial{
-  public int degrees, turnDirection;  // don't care if outside can read/write
+  public int ordinal, degrees, direction;  // don't care if outside can read/write
+  public double speedToward, speedReturn;  // avg speed going to and coming back from target
   
   public Trial(int degrees, int direction){
     this.degrees = degrees;
-    this.turnDirection = direction;
+    this.direction = direction;
   }
   
   public String toString(){
-    return degrees+","+turnDirection;
+    return String.format("%d,%d,%d,%f,%f", ordinal, degrees, direction, speedToward, speedReturn);
   }
 }

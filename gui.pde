@@ -21,6 +21,18 @@ public void btnResetDeltaClick(GButton source, GEvent event) { //_CODE_:btnReset
 
 public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123:
   //println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
+  long startTime = millis();
+  double startPosition = anglePosition;
+  long duration = millis()-startTime;
+  double avgVelocity = abs( (anglePosition-startPosition)/(millis()-startTime));
+  if(currentTrial!=null){
+    if(direction==currentTrial.direction){
+      currentTrial.speedToward = avgVelocity;
+    }
+    else{
+      currentTrial.speedReturn = avgVelocity;
+    }
+  }
   if(spin(degrees2rotate,direction)){
     direction *= -1;  // next spin will go in opposite direction
   }
@@ -48,13 +60,24 @@ public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:bu
 
 public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:btnGenerateTrials:224544:
   trials2Run = generateTrials(angles, trialsPerBlock);
+  /*
   for(Trial trial : trials2Run){
-    System.out.println(trial);
+      output.println(trial);
   }
-  trialIdx = 0;
+  */
+  li = trials2Run.listIterator();
+  currentTrial = li.next();
   source.setEnabled(false);
   //println("btnGenerateTrials - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnGenerateTrials:224544:
+
+public void btnNextTrialClick(GButton source, GEvent event) { //_CODE_:btnNextTrial:908733:
+  if(currentTrial!=null){
+    output.println(currentTrial);
+    currentTrial = li.next();
+  }
+  //println("btnNextTrial - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnNextTrial:908733:
 
 
 
@@ -119,10 +142,14 @@ public void createGUI(){
   buttonResetPosition = new GButton(this, 40, 20, 100, 50);
   buttonResetPosition.setText("Reset Position");
   buttonResetPosition.addEventHandler(this, "buttonResetPositionClick");
-  btnGenerateTrials = new GButton(this, 467, 89, 108, 39);
+  btnGenerateTrials = new GButton(this, 450, 20, 120, 39);
   btnGenerateTrials.setText("Generate Trials");
   btnGenerateTrials.setTextBold();
   btnGenerateTrials.addEventHandler(this, "btnGenerateTrialsClicked");
+  btnNextTrial = new GButton(this, 450, 80, 120, 40);
+  btnNextTrial.setText("Next Trial");
+  btnNextTrial.setTextBold();
+  btnNextTrial.addEventHandler(this, "btnNextTrialClick");
 }
 
 // Variable declarations 
@@ -138,4 +165,5 @@ GCustomSlider csliderPower;
 GLabel labelDisplay; 
 GButton buttonResetPosition; 
 GButton btnGenerateTrials; 
+GButton btnNextTrial; 
 
