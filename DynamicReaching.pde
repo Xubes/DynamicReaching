@@ -80,7 +80,8 @@ void draw(){
   labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f",anglePosition, angleDelta,angularVelocity));
   String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
   if(currentTrial!=null){
-    displayStr += String.format("\nTrial:\t%d, %d", currentTrial.degrees, currentTrial.direction);
+    //displayStr += String.format("\nTrial:\t%d, %d", currentTrial.degrees, currentTrial.direction);
+    displayStr += "\n" + currentTrial;
   }
   else{
     displayStr += "\n" + degrees2Rotate;
@@ -259,6 +260,6 @@ public class Trial{
   }
   
   public String toString(){
-    return String.format("%d,%d,%d,%f,%f", ordinal, degrees, direction, speedToward, speedReturn);
+    return String.format("%d,%d,%d,%.3f,%.3f", ordinal, degrees, direction, speedToward, speedReturn);
   }
 }
