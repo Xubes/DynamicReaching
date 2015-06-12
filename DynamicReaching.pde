@@ -24,7 +24,7 @@ int[] angles = {180, 140, 220};  // degrees to use for generating trials
 int trialsPerBlock = 8;  // number of rotations (each direction) per block
 LinkedList<Trial> trials2Run;  // list of trials
 ListIterator<Trial> li;
-Trial currentTrial;  // reference to index of current trial in list
+Trial currentTrial;
 static PrintWriter output;
 
 void setup(){
@@ -57,6 +57,7 @@ void setup(){
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
   degrees2Rotate = angles[0];
+  currentTrial = new Trial(degrees2Rotate, direction);
   try{
     output = new PrintWriter("DynamicReaching.txt");
   }
