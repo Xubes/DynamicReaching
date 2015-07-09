@@ -1,0 +1,9 @@
+#!/bin/bash
+
+actionbot="${HOME}/actionbot/src/actionbot"
+dynreach="${HOME}~/DynamicReaching/application.linux64/DynamicReaching"
+pportL=`ls /dev | egrep "cu.usbmodem\d+"`
+portR="/dev/cu.usbmodemRTQ0011"
+portC="/dev/cu.usbmodemfd1211"
+
+"$dynreach" | "$actionbot" $portL $portR $portC
