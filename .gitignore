@@ -1,8 +1,6 @@
-GUI_BUILDER_DATA
 application.linux32
 application.linux64
 actionbot
-RunScript.sh
 DynamicReaching.txt
 TestRuns/
 .DS_Store
