@@ -116,7 +116,7 @@ public void createGUI(){
   csliderBrake.setShowLimits(true);
   csliderBrake.setTextOrientation(G4P.ORIENT_LEFT);
   csliderBrake.setRotation(PI/2, GControlMode.CORNER);
-  csliderBrake.setLimits(0, 180, 0);
+  csliderBrake.setLimits(0, 300, 0);
   csliderBrake.setNbrTicks(19);
   csliderBrake.setShowTicks(true);
   csliderBrake.setNumberFormat(G4P.INTEGER, 0);
@@ -139,7 +139,7 @@ public void createGUI(){
   csliderPower.setShowLimits(true);
   csliderPower.setTextOrientation(G4P.ORIENT_LEFT);
   csliderPower.setRotation(PI/2, GControlMode.CORNER);
-  csliderPower.setLimits(65, 100, 50);
+  csliderPower.setLimits(65, 200, 50);
   csliderPower.setNbrTicks(6);
   csliderPower.setShowTicks(true);
   csliderPower.setNumberFormat(G4P.INTEGER, 0);
