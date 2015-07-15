@@ -25,13 +25,18 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
   double startPosition = anglePosition;
   long duration = millis()-startTime;
   if(spin(degrees2Rotate,direction)){
-    double avgVelocity = 1000 * Math.abs( (anglePosition-startPosition)/(millis()-startTime));
+    double endPosition = anglePosition;
+    double avgVelocity = 1000 * Math.abs( (cpos-startPosition)/(millis()-startTime));
     if(currentTrial!=null){
       if(direction==currentTrial.direction){
         currentTrial.speedToward = avgVelocity;
+        currentTrial.initPosToward = startPosition;
+        currentTrial.termPosToward = endPostion;
       }
       else{
         currentTrial.speedReturn = avgVelocity;
+        currentTrial.initPosReturn = startPosition;
+        currentTrial.termPosReturn = endPosition;
       }
     }
     direction *= -1;  // next spin will go in opposite direction
