@@ -255,6 +255,8 @@ LinkedList<Trial> generateTrials(int angles[], int trials){
 public class Trial{
   public int ordinal, degrees, direction;  // don't care if outside can read/write
   public double speedToward, speedReturn;  // avg speed going to and coming back from target
+  public double initPosToward, termPosToward;
+  public double initPosReturn, termPosReturn;
   
   public Trial(int degrees, int direction){
     this.degrees = degrees;
@@ -262,6 +264,8 @@ public class Trial{
   }
   
   public String toString(){
-    return String.format("%d,%d,%d,%.3f,%.3f", ordinal, degrees, direction, speedToward, speedReturn);
+    return String.format("%d,%d,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f",
+                        ordinal, degrees, direction, speedToward, speedReturn,
+                        initPosToward, termPosToward, initPosReturn, termPosReturn);
   }
 }
