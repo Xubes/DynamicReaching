@@ -265,7 +265,8 @@ public class Trial{
   
   public String toString(){
     return String.format("%d,%d,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f",
-                        ordinal, degrees, direction, speedToward, speedReturn,
-                        initPosToward, termPosToward, initPosReturn, termPosReturn);
+                        ordinal, degrees, direction,
+                        speedToward,initPosToward, termPosToward,
+                        speedReturn, initPosReturn, termPosReturn);
   }
 }
