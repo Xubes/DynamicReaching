@@ -22,7 +22,7 @@ static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 int BASELINE = 180, OVERSHOOT = 240, UNDERSHOOT = 110;
 int[] angles = {BASELINE, UNDERSHOOT, OVERSHOOT};  // degrees to use for generating trials
-int trialsPerBlock = 8;  // number of rotations (each direction) per block
+int trialsPerBlock = 6;  // number of rotations (each direction) per block
 LinkedList<Trial> trials2Run;  // list of trials
 ListIterator<Trial> li;
 Trial currentTrial;
