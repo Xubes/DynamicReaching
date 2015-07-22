@@ -180,7 +180,7 @@ boolean spin(int degrees, int direction){
   while(distance < (degrees-brake)){
     distance = abs(anglePosition-startPosition);
     // just a precaution...
-    if(power >= 150){
+    if(power >= 250){
       sendCommandF(0);
       System.err.println("Motor power exceeded safe level.");
       return false;
