@@ -84,7 +84,7 @@ void draw(){
   String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
   if(currentTrial!=null){
     //displayStr += String.format("\nTrial:\t%d, %d", currentTrial.degrees, currentTrial.direction);
-    displayStr += "\n" + currentTrial;
+    displayStr += "\n" + currentTrial.toString2();
   }
   else{
     displayStr += "\n" + degrees2Rotate;
@@ -269,6 +269,14 @@ public class Trial{
                         ordinal, degrees, direction,
                         speedToward,initPosToward, termPosToward,
                         speedReturn, initPosReturn, termPosReturn);
+  }
+  
+  /* Alternate toString for the display window. */
+  public String toString2(){
+    return String.format("%d  %d  %d\n%.2f  %.2f  %.2f\n%.2f  %.2f  %.2f",
+                          ordinal, degrees, direction,
+                          speedToward, initPosToward, termPosToward,
+                          speedReturn, initPosReturn, termPosReturn);
   }
 }
 
