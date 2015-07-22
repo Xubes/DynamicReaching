@@ -83,12 +83,21 @@ public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:bt
 public void btnNextTrialClick(GButton source, GEvent event) { //_CODE_:btnNextTrial:908733:
   if(currentTrial!=null){
     output.println(currentTrial);
-    currentTrial = li.next();
+    if(li.hasNext()){
+      currentTrial = li.next();
+    }
+    else{
+      System.err.println("No next trial found!");
+    }
     degrees2Rotate = currentTrial.degrees;
     direction = currentTrial.direction;
   }
   //println("btnNextTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnNextTrial:908733:
+
+public void buttonSaveClick(GButton source, GEvent event) { //_CODE_:buttonSave:860221:
+  selectOutput("Select file to save to.", "saveToFile");
+} //_CODE_:buttonSave:860221:
 
 
 
@@ -102,7 +111,7 @@ public void createGUI(){
     frame.setTitle("Sketch Window");
   btnResetDelta = new GButton(this, 140, 20, 110, 50);
   btnResetDelta.setText("Reset Delta");
-  btnResetDelta.setLocalColorScheme(GCScheme.CYAN_SCHEME);
+  btnResetDelta.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
   btnResetDelta.addEventHandler(this, "btnResetDeltaClick");
   btnSpin = new GButton(this, 40, 330, 211, 50);
   btnSpin.setText("Spin!");
@@ -156,11 +165,18 @@ public void createGUI(){
   btnGenerateTrials = new GButton(this, 450, 20, 120, 39);
   btnGenerateTrials.setText("Generate Trials");
   btnGenerateTrials.setTextBold();
+  btnGenerateTrials.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   btnGenerateTrials.addEventHandler(this, "btnGenerateTrialsClicked");
   btnNextTrial = new GButton(this, 450, 80, 120, 40);
   btnNextTrial.setText("Next Trial");
   btnNextTrial.setTextBold();
+  btnNextTrial.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   btnNextTrial.addEventHandler(this, "btnNextTrialClick");
+  buttonSave = new GButton(this, 450, 280, 120, 40);
+  buttonSave.setText("Save");
+  buttonSave.setTextBold();
+  buttonSave.setLocalColorScheme(GCScheme.CYAN_SCHEME);
+  buttonSave.addEventHandler(this, "buttonSaveClick");
 }
 
 // Variable declarations 
@@ -177,4 +193,5 @@ GLabel labelDisplay;
 GButton buttonResetPosition; 
 GButton btnGenerateTrials; 
 GButton btnNextTrial; 
+GButton buttonSave; 
 

@@ -23,9 +23,9 @@ static final double EPS = 1e-9;
 int BASELINE = 180, OVERSHOOT = 240, UNDERSHOOT = 110;
 int[] angles = {BASELINE, UNDERSHOOT, OVERSHOOT};  // degrees to use for generating trials
 int trialsPerBlock = 6;  // number of rotations (each direction) per block
-LinkedList<Trial> trials2Run;  // list of trials
-ListIterator<Trial> li;
-Trial currentTrial;
+static LinkedList<Trial> trials2Run;  // list of trials
+static ListIterator<Trial> li;
+static Trial currentTrial;
 static PrintWriter output;
 
 void setup(){
@@ -59,8 +59,9 @@ void setup(){
   direction = CLOCKWISE;
   degrees2Rotate = angles[0];
   currentTrial = new Trial(degrees2Rotate, direction);
+  // Open output file.
   try{
-    output = new PrintWriter("DynamicReaching.txt");
+    output = new PrintWriter("DynamicReaching" + System.currentTimeMillis() + ".csv");
   }
   catch(FileNotFoundException e){
     System.err.println(e);
@@ -269,4 +270,27 @@ public class Trial{
                         speedToward,initPosToward, termPosToward,
                         speedReturn, initPosReturn, termPosReturn);
   }
+}
+
+/* Save all the trials in trials2Run to the file. */
+public static void saveToFile(File file){
+  if (file==null){
+    System.err.println("Error: invalid file selected for saving.");
+    return;
+  }
+  // Try to open the file with a PrintWriter.
+  PrintWriter printer = null;
+  try{
+   printer = new PrintWriter(file);
+  }
+  catch(FileNotFoundException e){
+    System.err.println(e);
+  }
+
+  // Wite out to the file.
+  for(Trial t : trials2Run){
+    printer.println(t);
+  }
+  
+  printer.close();
 }
