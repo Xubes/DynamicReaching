@@ -85,7 +85,7 @@ public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:bt
 public void btnNextTrialClick(GButton source, GEvent event) { //_CODE_:btnNextTrial:908733:
   if(currentTrial!=null){
     output.println(currentTrial);
-    if(li.hasNext()){
+    if(li!=null && li.hasNext()){
       currentTrial = li.next();
     }
     else{
