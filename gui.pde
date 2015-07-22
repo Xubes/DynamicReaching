@@ -127,7 +127,7 @@ public void createGUI(){
   csliderBrake.setShowLimits(true);
   csliderBrake.setTextOrientation(G4P.ORIENT_LEFT);
   csliderBrake.setRotation(PI/2, GControlMode.CORNER);
-  csliderBrake.setLimits(0, 300, 0);
+  csliderBrake.setLimits(65, 300, 0);
   csliderBrake.setNbrTicks(19);
   csliderBrake.setShowTicks(true);
   csliderBrake.setNumberFormat(G4P.INTEGER, 0);
