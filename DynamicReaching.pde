@@ -187,7 +187,7 @@ boolean spin(int degrees, int direction){
     }
     
     // don't send a new command if chair is accelerating
-    if( (angularVelocity-prevVelocity) > EPS){
+    if( abs(angularVelocity-prevVelocity) > EPS){
       prevVelocity = angularVelocity;
       continue;
     }
@@ -195,8 +195,13 @@ boolean spin(int degrees, int direction){
       sendCommand(command);
     }
   }
-  // send brake command
-  //sendCommand(0);
+  // Wait until chair stops spinning
+  while(abs(angularVelocity) >= 1.0){
+    //System.err.println(angularVelocity);
+    // Apply brake if distance gte desire
+    if(abs(anglePosition-startPosition)>=degrees) sendCommand(0);
+  }
+
   return true;
 }
 

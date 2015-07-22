@@ -24,6 +24,7 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
   // Reset position on first spin of trial.
   if(direction==currentTrial.direction) resetPosition();
   long startTime = millis();
+  while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
   double startPosition = anglePosition;
   long duration = millis()-startTime;
   if(spin(degrees2Rotate,direction)){
