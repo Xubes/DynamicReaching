@@ -196,7 +196,7 @@ boolean spin(int degrees, int direction){
     }
   }
   // Wait until chair stops spinning
-  while(abs(angularVelocity) >= 1.0){
+  while(abs(angularVelocity) >= 2.0){
     // Apply brake if distance gte desire
     if(abs(anglePosition-startPosition)>=degrees) sendCommand(0);
     redraw();
