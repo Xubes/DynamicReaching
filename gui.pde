@@ -21,6 +21,8 @@ public void btnResetDeltaClick(GButton source, GEvent event) { //_CODE_:btnReset
 
 public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123:
   //println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
+  // Reset position on first spin of trial.
+  if(direction==currentTrial.direction) resetPosition();
   long startTime = millis();
   double startPosition = anglePosition;
   long duration = millis()-startTime;
