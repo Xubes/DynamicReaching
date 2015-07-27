@@ -22,11 +22,21 @@ public void btnResetDeltaClick(GButton source, GEvent event) { //_CODE_:btnReset
 public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123:
   //println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
   // Reset position on first spin of trial.
-  if(direction==currentTrial.direction) resetPosition();
-  long startTime = millis();
-  while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
+  long startTime;
+  if(direction==currentTrial.direction){
+    resetPosition();
+    startTime = millis();
+    btnNextTrial.setEnabled(false);
+    btnPrevTrial.setEnabled(false);
+    while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
+  }
+  else{
+    btnNextTrial.setEnabled(true);
+    btnPrevTrial.setEnabled(true);
+  }
+  
   double startPosition = anglePosition;
-  long duration = millis()-startTime;
+  startTime = millis();
   if(spin(degrees2Rotate,direction)){
     double endPosition = anglePosition;
     double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(millis()-startTime));
@@ -87,13 +97,11 @@ public void btnNextTrialClick(GButton source, GEvent event) { //_CODE_:btnNextTr
   if(currentTrial!=null){
     output.println(currentTrial);
     if(li!=null && li.hasNext()){
-      currentTrial = li.next();
+      setTrial(li.next());
     }
     else{
       System.err.println("No next trial found!");
     }
-    degrees2Rotate = currentTrial.degrees;
-    direction = currentTrial.direction;
   }
   //println("btnNextTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnNextTrial:908733:
@@ -101,6 +109,18 @@ public void btnNextTrialClick(GButton source, GEvent event) { //_CODE_:btnNextTr
 public void buttonSaveClick(GButton source, GEvent event) { //_CODE_:buttonSave:860221:
   selectOutput("Select file to save to.", "saveToFile");
 } //_CODE_:buttonSave:860221:
+
+public void btnPrevTrialClick(GButton source, GEvent event) { //_CODE_:btnPrevTrial:460108:
+  if(currentTrial!=null){
+    output.println(currentTrial);
+    if(li!=null && li.hasPrevious()){
+      setTrial(li.previous());
+    }
+    else{
+      System.err.println("No previous trial found!");
+    }
+  //println("btnPrevTrial - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnPrevTrial:460108:
 
 
 
@@ -180,6 +200,9 @@ public void createGUI(){
   buttonSave.setTextBold();
   buttonSave.setLocalColorScheme(GCScheme.CYAN_SCHEME);
   buttonSave.addEventHandler(this, "buttonSaveClick");
+  btnPrevTrial = new GButton(this, 450, 130, 120, 40);
+  btnPrevTrial.setText("Previous Trial");
+  btnPrevTrial.addEventHandler(this, "btnPrevTrialClick");
 }
 
 // Variable declarations 
@@ -197,4 +220,5 @@ GButton buttonResetPosition;
 GButton btnGenerateTrials; 
 GButton btnNextTrial; 
 GButton buttonSave; 
+GButton btnPrevTrial; 
 

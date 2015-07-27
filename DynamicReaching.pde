@@ -307,3 +307,10 @@ public static void saveToFile(File file){
   
   printer.close();
 }
+
+/* Updates the global vars to the given trial's parameters. */
+public void setTrial(Trial t){
+  this.currentTrial = t;
+  this.direction = t.direction;
+  this.degrees2Rotate = t.degrees;
+}
