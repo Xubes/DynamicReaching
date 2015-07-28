@@ -45,14 +45,19 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
         currentTrial.speedToward = avgVelocity;
         currentTrial.initPosToward = startPosition;
         currentTrial.termPosToward = endPosition;
+        currentTrial.complete = false;
       }
       else{
         currentTrial.speedReturn = avgVelocity;
         currentTrial.initPosReturn = startPosition;
         currentTrial.termPosReturn = endPosition;
+        currentTrial.complete = true;
       }
     }
     direction *= -1;  // next spin will go in opposite direction
+  }
+  if(currentTrial.isComplete()){
+    nextTrial();
   }
 } //_CODE_:btnSpin:521123:
 
@@ -94,15 +99,7 @@ public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:bt
 } //_CODE_:btnGenerateTrials:224544:
 
 public void btnNextTrialClick(GButton source, GEvent event) { //_CODE_:btnNextTrial:908733:
-  if(currentTrial!=null){
-    output.println(currentTrial);
-    if(li!=null && li.hasNext()){
-      setTrial(li.next());
-    }
-    else{
-      System.err.println("No next trial found!");
-    }
-  }
+  nextTrial();
   //println("btnNextTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnNextTrial:908733:
 
@@ -111,14 +108,7 @@ public void buttonSaveClick(GButton source, GEvent event) { //_CODE_:buttonSave:
 } //_CODE_:buttonSave:860221:
 
 public void btnPrevTrialClick(GButton source, GEvent event) { //_CODE_:btnPrevTrial:460108:
-  if(currentTrial!=null){
-    output.println(currentTrial);
-    if(li!=null && li.hasPrevious()){
-      setTrial(li.previous());
-    }
-    else{
-      System.err.println("No previous trial found!");
-    }
+  previousTrial();
   //println("btnPrevTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnPrevTrial:460108:
 

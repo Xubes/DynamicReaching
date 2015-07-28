@@ -263,10 +263,12 @@ public class Trial{
   public double speedToward, speedReturn;  // avg speed going to and coming back from target
   public double initPosToward, termPosToward;
   public double initPosReturn, termPosReturn;
+  public boolean complete;
   
   public Trial(int degrees, int direction){
     this.degrees = degrees;
     this.direction = direction;
+    this.complete = false;
   }
   
   public String toString(){
@@ -282,6 +284,11 @@ public class Trial{
                           ordinal, degrees, direction,
                           speedToward, initPosToward, termPosToward,
                           speedReturn, initPosReturn, termPosReturn);
+  }
+  
+  /* Return boolean variable complete. */
+  public boolean isComplete(){
+    return complete;
   }
 }
 
@@ -313,4 +320,30 @@ public void setTrial(Trial t){
   this.currentTrial = t;
   this.direction = t.direction;
   this.degrees2Rotate = t.degrees;
+}
+
+/* Advance to next trial if available. */
+public void nextTrial(){
+  if(currentTrial!=null){
+    output.println(currentTrial);
+    if(li!=null && li.hasNext()){
+      setTrial(li.next());
+    }
+    else{
+      System.err.println("No next trial found!");
+    }
+  }  
+}
+
+/* Go back to previous trial if available. */
+public void previousTrial(){
+  if(currentTrial!=null){
+    output.println(currentTrial);
+    if(li!=null && li.hasPrevious()){
+      setTrial(li.previous());
+    }
+    else{
+      System.err.println("No previous trial found!");
+    }
+  }  
 }
