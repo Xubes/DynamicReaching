@@ -84,8 +84,6 @@ public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:bu
 
 public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:btnGenerateTrials:224544:
   trials2Run = generateTrials(trialsPerBlock, direction);
-  
-  for(Trial t : trials2Run) System.err.println(t);
   // Set the current trial.
   li = trials2Run.listIterator();
   setTrial(li.next());
@@ -125,8 +123,6 @@ public void btnSetLowClick(GButton source, GEvent event) { //_CODE_:btnSetLow:99
 //  println("btnSetBaseline - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnSetLow:993272:
 
-/* If current trial is baseline trial, setTrial() temp trial.
-    Otherwise, swap current trial into temp trial and setTrial() baseline trial. */
 public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBaselineTrial:311316:
   if(currentTrial == baselineTrial){
     setTrial(tempTrial);
@@ -191,7 +187,7 @@ public void createGUI(){
   csliderPower.setShowLimits(true);
   csliderPower.setTextOrientation(G4P.ORIENT_LEFT);
   csliderPower.setRotation(PI/2, GControlMode.CORNER);
-  csliderPower.setLimits(65, 200, 20);
+  csliderPower.setLimits(65, 200, 40);
   csliderPower.setNbrTicks(6);
   csliderPower.setShowTicks(true);
   csliderPower.setNumberFormat(G4P.INTEGER, 0);
