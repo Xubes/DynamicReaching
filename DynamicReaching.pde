@@ -247,7 +247,7 @@ double abs(double x){
 LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
   LinkedList<Trial> myTrials = new LinkedList<Trial>();
   ArrayList<Integer> set = new ArrayList<Integer>();
-  set.add(LOW); set.add(MEDIUM); set.add(HIGH);
+  set.add(MEDIUM); set.add(HIGH);
   for(int i=0; i<trialsPerSpeed; i++){
     Collections.shuffle(set);
     for(int s : set){
