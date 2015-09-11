@@ -20,9 +20,10 @@ int power, brake, direction, degrees2Rotate;
 static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
-int BASELINE = 180, OVERSHOOT = 250, UNDERSHOOT = 110;
-int[] angles = {BASELINE, UNDERSHOOT, OVERSHOOT};  // degrees to use for generating trials
-int trialsPerBlock = 6;  // number of rotations (each direction) per block
+static final int LOW = 0, MEDIUM = 1, HIGH = 2;
+int[][] settings = new int[3][2];
+static final int ANGLE = 270;
+int trialsPerBlock = 10;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
 static Trial currentTrial;
@@ -57,8 +58,10 @@ void setup(){
   power = csliderPower.getValueI();
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
-  degrees2Rotate = angles[0];
-  currentTrial = new Trial(degrees2Rotate, direction);
+  degrees2Rotate = ANGLE;
+  settings[MEDIUM][0] = power;
+  settings[MEDIUM][1] = brake;
+  currentTrial = new Trial(ANGLE, direction, MEDIUM);
   // Open output file.
   try{
     output = new PrintWriter("DynamicReaching" + System.currentTimeMillis() + ".csv");
@@ -237,18 +240,16 @@ double abs(double x){
 /* Generate trials array.  Returns a list of trial objects.
    Args: angles - the list of angles; trials - the number of trials in each direction per angle. 
    */
-LinkedList<Trial> generateTrials(int angles[], int trials){
+LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
   LinkedList<Trial> myTrials = new LinkedList<Trial>();
-
-  for(int angle : angles){
-    for(int i=0; i<trials; i++){
-      myTrials.add(new Trial(angle, CLOCKWISE));
-      myTrials.add(new Trial(angle, COUNTERCLOCKWISE));
+  ArrayList<Integer> set = new ArrayList<Integer>();
+  set.add(LOW); set.add(MEDIUM); set.add(HIGH);
+  for(int i=0; i<trialsPerSpeed; i++){
+    Collections.shuffle(set);
+    for(int s : set){
+      myTrials.add(new Trial(ANGLE, direction, s));
     }
   }
-  
-  Collections.shuffle(myTrials);
-  Collections.shuffle(myTrials);
   
   // Set ordinal for each trial (the trial number).
   int ctr = 1;
@@ -260,15 +261,16 @@ LinkedList<Trial> generateTrials(int angles[], int trials){
 
 /* Class to hold information about each trial.  For now the degrees turn and direction of turn. */
 public class Trial{
-  public int ordinal, degrees, direction;  // don't care if outside can read/write
+  public int ordinal, degrees, direction, setting;  // don't care if outside can read/write
   public double speedToward, speedReturn;  // avg speed going to and coming back from target
   public double initPosToward, termPosToward;
   public double initPosReturn, termPosReturn;
   public boolean complete;
   
-  public Trial(int degrees, int direction){
+  public Trial(int degrees, int direction, int speedSetting){
     this.degrees = degrees;
     this.direction = direction;
+    this.setting = speedSetting;
     this.complete = false;
   }
   
@@ -321,6 +323,8 @@ public void setTrial(Trial t){
   this.currentTrial = t;
   this.direction = t.direction;
   this.degrees2Rotate = t.degrees;
+  this.power = settings[t.setting][0];
+  this.brake = settings[t.setting][1];
 }
 
 /* Advance to next trial if available. */

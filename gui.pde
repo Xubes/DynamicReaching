@@ -83,12 +83,7 @@ public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:bu
 } //_CODE_:buttonResetPosition:614711:
 
 public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:btnGenerateTrials:224544:
-  trials2Run = generateTrials(angles, trialsPerBlock);
-  // Add in the 4 initial trials.
-  trials2Run.addFirst(new Trial(BASELINE, CLOCKWISE));
-  trials2Run.addFirst(new Trial(BASELINE, COUNTERCLOCKWISE));
-  trials2Run.addFirst(new Trial(BASELINE, CLOCKWISE));
-  trials2Run.addFirst(new Trial(BASELINE, COUNTERCLOCKWISE));
+  trials2Run = generateTrials(trialsPerBlock, direction);
   
   // Set the current trial.
   li = trials2Run.listIterator();
@@ -112,6 +107,24 @@ public void btnPrevTrialClick(GButton source, GEvent event) { //_CODE_:btnPrevTr
   previousTrial();
   //println("btnPrevTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnPrevTrial:460108:
+
+public void btnSetHighClick(GButton source, GEvent event) { //_CODE_:btnSetHigh:877715:
+  settings[HIGH][0] = power;
+  settings[HIGH][1] = brake;
+//  println("btnSetHigh - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnSetHigh:877715:
+
+public void btnSetMediumClick(GButton source, GEvent event) { //_CODE_:btnSetMedium:523889:
+  settings[MEDIUM][0] = power;
+  settings[MEDIUM][1] = brake;
+//  println("btnSetMedium - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnSetMedium:523889:
+
+public void btnSetLowClick(GButton source, GEvent event) { //_CODE_:btnSetLow:993272:
+  settings[LOW][0] = power;
+  settings[LOW][1] = brake;
+//  println("btnSetBaseline - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnSetLow:993272:
 
 
 
@@ -186,7 +199,7 @@ public void createGUI(){
   btnNextTrial.setTextBold();
   btnNextTrial.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   btnNextTrial.addEventHandler(this, "btnNextTrialClick");
-  buttonSave = new GButton(this, 450, 280, 120, 40);
+  buttonSave = new GButton(this, 450, 330, 120, 50);
   buttonSave.setText("Save");
   buttonSave.setTextBold();
   buttonSave.setLocalColorScheme(GCScheme.CYAN_SCHEME);
@@ -194,6 +207,18 @@ public void createGUI(){
   btnPrevTrial = new GButton(this, 450, 130, 120, 40);
   btnPrevTrial.setText("Previous Trial");
   btnPrevTrial.addEventHandler(this, "btnPrevTrialClick");
+  btnSetHigh = new GButton(this, 470, 180, 80, 30);
+  btnSetHigh.setText("Set High");
+  btnSetHigh.setTextBold();
+  btnSetHigh.addEventHandler(this, "btnSetHighClick");
+  btnSetMedium = new GButton(this, 470, 220, 80, 30);
+  btnSetMedium.setText("Set Medium");
+  btnSetMedium.setTextBold();
+  btnSetMedium.addEventHandler(this, "btnSetMediumClick");
+  btnSetLow = new GButton(this, 470, 260, 80, 30);
+  btnSetLow.setText("Set Baseline");
+  btnSetLow.setTextBold();
+  btnSetLow.addEventHandler(this, "btnSetLowClick");
 }
 
 // Variable declarations 
@@ -212,4 +237,7 @@ GButton btnGenerateTrials;
 GButton btnNextTrial; 
 GButton buttonSave; 
 GButton btnPrevTrial; 
+GButton btnSetHigh; 
+GButton btnSetMedium; 
+GButton btnSetLow; 
 
