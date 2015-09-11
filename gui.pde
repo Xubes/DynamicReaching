@@ -130,12 +130,12 @@ public void btnSetLowClick(GButton source, GEvent event) { //_CODE_:btnSetLow:99
 public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBaselineTrial:311316:
   if(currentTrial == baselineTrial){
     setTrial(tempTrial);
-    source.setText('Resume experiment');
+    source.setText("Resume experiment");
   }
   else{
     tempTrial = currentTrial;
     setTrial(baselineTrial);
-    source.setText('Load baseline');
+    source.setText("Load baseline");
   }
   tempTrial = currentTrial;
   setTrial(baselineTrial);
