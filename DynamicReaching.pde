@@ -29,6 +29,7 @@ static ListIterator<Trial> li;
 static Trial currentTrial;
 static PrintWriter output;
 Trial baselineTrial, tempTrial;
+boolean baselineFlag = false;
 
 void setup(){
   size(600,400);

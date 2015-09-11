@@ -84,6 +84,9 @@ public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:bu
 
 public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:btnGenerateTrials:224544:
   trials2Run = generateTrials(trialsPerBlock, direction);
+  // Print trials to console
+  for(Trial t : trials2Run) System.err.println(t);
+  
   // Set the current trial.
   li = trials2Run.listIterator();
   setTrial(li.next());
@@ -124,17 +127,19 @@ public void btnSetLowClick(GButton source, GEvent event) { //_CODE_:btnSetLow:99
 } //_CODE_:btnSetLow:993272:
 
 public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBaselineTrial:311316:
-  if(currentTrial == baselineTrial){
+  if(baselineFlag){
+    System.err.println("Resuming experiment");
     setTrial(tempTrial);
-    source.setText("Resume experiment");
-  }
-  else{
-    tempTrial = currentTrial;
-    setTrial(baselineTrial);
     source.setText("Load baseline");
   }
-  tempTrial = currentTrial;
-  setTrial(baselineTrial);
+  else{
+    System.err.println("Loading baseline trial");
+    tempTrial = currentTrial;
+    setTrial(baselineTrial);
+    source.setText("Resume experiment");
+  }
+  baselineFlag = !baselineFlag;
+  redraw();
 //  println("btnBaselineTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnBaselineTrial:311316:
 
