@@ -85,11 +85,14 @@ public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:bu
 public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:btnGenerateTrials:224544:
   trials2Run = generateTrials(trialsPerBlock, direction);
   
+  for(Trial t : trials2Run) System.err.println(t);
   // Set the current trial.
   li = trials2Run.listIterator();
   currentTrial = li.next();
   degrees2Rotate = currentTrial.degrees;
   direction = currentTrial.direction;
+  power = settings[currentTrial.setting][0];
+  brake = settings[currentTrial.setting][1];
   source.setEnabled(false);
   //println("btnGenerateTrials - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnGenerateTrials:224544:

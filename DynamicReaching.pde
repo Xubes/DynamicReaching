@@ -275,18 +275,20 @@ public class Trial{
   }
   
   public String toString(){
-    return String.format("%d,%d,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f",
+    return String.format("%d,%d,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%d",
                         ordinal, degrees, direction,
                         speedToward,initPosToward, termPosToward,
-                        speedReturn, initPosReturn, termPosReturn);
+                        speedReturn, initPosReturn, termPosReturn,
+                        setting);
   }
   
   /* Alternate toString for the display window. */
   public String toString2(){
-    return String.format("%d  %d  %d\n%.2f  %.2f  %.2f\n%.2f  %.2f  %.2f",
+    return String.format("%d  %d  %d\n%.2f  %.2f  %.2f\n%.2f  %.2f  %.2f\n%d",
                           ordinal, degrees, direction,
                           speedToward, initPosToward, termPosToward,
-                          speedReturn, initPosReturn, termPosReturn);
+                          speedReturn, initPosReturn, termPosReturn,
+                          setting);
   }
   
   /* Return boolean variable complete. */
