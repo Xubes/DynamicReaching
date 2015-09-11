@@ -28,6 +28,7 @@ static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
 static Trial currentTrial;
 static PrintWriter output;
+Trial baselineTrial, tempTrial;
 
 void setup(){
   size(600,400);
@@ -62,6 +63,8 @@ void setup(){
   settings[MEDIUM][0] = power;
   settings[MEDIUM][1] = brake;
   currentTrial = new Trial(ANGLE, direction, MEDIUM);
+  baselineTrial = new Trial(ANGLE, direction, LOW);
+  tempTrial = baselineTrial;
   // Open output file.
   try{
     output = new PrintWriter("DynamicReaching" + System.currentTimeMillis() + ".csv");

@@ -88,11 +88,7 @@ public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:bt
   for(Trial t : trials2Run) System.err.println(t);
   // Set the current trial.
   li = trials2Run.listIterator();
-  currentTrial = li.next();
-  degrees2Rotate = currentTrial.degrees;
-  direction = currentTrial.direction;
-  power = settings[currentTrial.setting][0];
-  brake = settings[currentTrial.setting][1];
+  setTrial(li.next());
   source.setEnabled(false);
   //println("btnGenerateTrials - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnGenerateTrials:224544:
@@ -128,6 +124,23 @@ public void btnSetLowClick(GButton source, GEvent event) { //_CODE_:btnSetLow:99
   settings[LOW][1] = brake;
 //  println("btnSetBaseline - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnSetLow:993272:
+
+/* If current trial is baseline trial, setTrial() temp trial.
+    Otherwise, swap current trial into temp trial and setTrial() baseline trial. */
+public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBaselineTrial:311316:
+  if(currentTrial == baselineTrial){
+    setTrial(tempTrial);
+    source.setText('Resume experiment');
+  }
+  else{
+    tempTrial = currentTrial;
+    setTrial(baselineTrial);
+    source.setText('Load baseline');
+  }
+  tempTrial = currentTrial;
+  setTrial(baselineTrial);
+//  println("btnBaselineTrial - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnBaselineTrial:311316:
 
 
 
@@ -178,7 +191,7 @@ public void createGUI(){
   csliderPower.setShowLimits(true);
   csliderPower.setTextOrientation(G4P.ORIENT_LEFT);
   csliderPower.setRotation(PI/2, GControlMode.CORNER);
-  csliderPower.setLimits(65, 200, 50);
+  csliderPower.setLimits(65, 200, 20);
   csliderPower.setNbrTicks(6);
   csliderPower.setShowTicks(true);
   csliderPower.setNumberFormat(G4P.INTEGER, 0);
@@ -213,15 +226,23 @@ public void createGUI(){
   btnSetHigh = new GButton(this, 470, 180, 80, 30);
   btnSetHigh.setText("Set High");
   btnSetHigh.setTextBold();
+  btnSetHigh.setLocalColorScheme(GCScheme.RED_SCHEME);
   btnSetHigh.addEventHandler(this, "btnSetHighClick");
   btnSetMedium = new GButton(this, 470, 220, 80, 30);
   btnSetMedium.setText("Set Medium");
   btnSetMedium.setTextBold();
+  btnSetMedium.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   btnSetMedium.addEventHandler(this, "btnSetMediumClick");
   btnSetLow = new GButton(this, 470, 260, 80, 30);
   btnSetLow.setText("Set Baseline");
   btnSetLow.setTextBold();
+  btnSetLow.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   btnSetLow.addEventHandler(this, "btnSetLowClick");
+  btnBaselineTrial = new GButton(this, 350, 330, 80, 50);
+  btnBaselineTrial.setText("Load baseline");
+  btnBaselineTrial.setTextBold();
+  btnBaselineTrial.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  btnBaselineTrial.addEventHandler(this, "btnBaselineTrialClick");
 }
 
 // Variable declarations 
@@ -243,4 +264,5 @@ GButton btnPrevTrial;
 GButton btnSetHigh; 
 GButton btnSetMedium; 
 GButton btnSetLow; 
+GButton btnBaselineTrial; 
 
