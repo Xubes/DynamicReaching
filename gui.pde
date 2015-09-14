@@ -57,7 +57,7 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
     }
     direction *= -1;  // next spin will go in opposite direction
   }
-  if(currentTrial.isComplete()){
+  if(currentTrial.isComplete() && !baselineFlag){
     nextTrial();
   }
 } //_CODE_:btnSpin:521123:
