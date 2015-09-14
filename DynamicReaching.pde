@@ -242,7 +242,12 @@ double abs(double x){
 }
 
 /* Generate trials array.  Returns a list of trial objects.
-   Args: angles - the list of angles; trials - the number of trials in each direction per angle. 
+   Creates a semi-random order of trials for high and medium speed settings.
+   Ensures that there are no more than two consecutive trials with the same setting.
+   Prepends 4 LOW setting trials.
+   Arguments:
+     trialsPerSpeed : number of trials for each speed setting
+     direction  : direction of spin for all trials.
    */
 LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
   LinkedList<Trial> myTrials = new LinkedList<Trial>();
@@ -260,6 +265,12 @@ LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
   for(Trial t : myTrials){
     t.ordinal = ctr++;
   }
+  
+  // Add 4 baseline (LOW) trials to the beginning.
+  for(int i=0; i<4; i++){
+    myTrials.addFirst(new Trial(ANGLE, direction, LOW));
+  }
+  
   return myTrials;  
 }
 
