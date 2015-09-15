@@ -21,7 +21,7 @@ static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 static final int LOW = 0, MEDIUM = 1, HIGH = 2;
-int[][] settings = new int[3][2];
+int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
 static final int ANGLE = 270;
 int trialsPerBlock = 10;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials

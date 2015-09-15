@@ -108,25 +108,25 @@ public void btnPrevTrialClick(GButton source, GEvent event) { //_CODE_:btnPrevTr
   //println("btnPrevTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnPrevTrial:460108:
 
-public void btnSetHighClick(GButton source, GEvent event) { //_CODE_:btnSetHigh:877715:
+public void btnSetHighClick(GButton source, GEvent event) { //_CODE_:btnSetHigh:288642:
   settings[HIGH][0] = power;
   settings[HIGH][1] = brake;
-//  println("btnSetHigh - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:btnSetHigh:877715:
+  //println("btnSetHigh - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnSetHigh:288642:
 
-public void btnSetMediumClick(GButton source, GEvent event) { //_CODE_:btnSetMedium:523889:
+public void btnSetMediumClick(GButton source, GEvent event) { //_CODE_:btnSetMedium:912663:
   settings[MEDIUM][0] = power;
   settings[MEDIUM][1] = brake;
-//  println("btnSetMedium - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:btnSetMedium:523889:
+  //println("btnSetMedium - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnSetMedium:912663:
 
-public void btnSetLowClick(GButton source, GEvent event) { //_CODE_:btnSetLow:993272:
+public void btnSetBaselineClick(GButton source, GEvent event) { //_CODE_:btnSetBaseline:335533:
   settings[LOW][0] = power;
   settings[LOW][1] = brake;
-//  println("btnSetBaseline - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:btnSetLow:993272:
+  //println("btnSetBaseline - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnSetBaseline:335533:
 
-public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBaselineTrial:311316:
+public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBaselineTrial:476833:
   if(baselineFlag){
     System.err.println("Resuming experiment");
     setTrial(tempTrial);
@@ -139,9 +139,9 @@ public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBa
     source.setText("Resume experiment");
   }
   baselineFlag = !baselineFlag;
-  redraw();
-//  println("btnBaselineTrial - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:btnBaselineTrial:311316:
+  redraw();  
+  //println("btnBaselineTrial - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnBaselineTrial:476833:
 
 
 
@@ -192,7 +192,7 @@ public void createGUI(){
   csliderPower.setShowLimits(true);
   csliderPower.setTextOrientation(G4P.ORIENT_LEFT);
   csliderPower.setRotation(PI/2, GControlMode.CORNER);
-  csliderPower.setLimits(65, 200, 40);
+  csliderPower.setLimits(65, 200, 50);
   csliderPower.setNbrTicks(6);
   csliderPower.setShowTicks(true);
   csliderPower.setNumberFormat(G4P.INTEGER, 0);
@@ -216,7 +216,7 @@ public void createGUI(){
   btnNextTrial.setTextBold();
   btnNextTrial.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   btnNextTrial.addEventHandler(this, "btnNextTrialClick");
-  buttonSave = new GButton(this, 450, 330, 120, 50);
+  buttonSave = new GButton(this, 450, 340, 120, 40);
   buttonSave.setText("Save");
   buttonSave.setTextBold();
   buttonSave.setLocalColorScheme(GCScheme.CYAN_SCHEME);
@@ -224,23 +224,23 @@ public void createGUI(){
   btnPrevTrial = new GButton(this, 450, 130, 120, 40);
   btnPrevTrial.setText("Previous Trial");
   btnPrevTrial.addEventHandler(this, "btnPrevTrialClick");
-  btnSetHigh = new GButton(this, 470, 180, 80, 30);
+  btnSetHigh = new GButton(this, 470, 190, 80, 30);
   btnSetHigh.setText("Set High");
   btnSetHigh.setTextBold();
   btnSetHigh.setLocalColorScheme(GCScheme.RED_SCHEME);
   btnSetHigh.addEventHandler(this, "btnSetHighClick");
-  btnSetMedium = new GButton(this, 470, 220, 80, 30);
+  btnSetMedium = new GButton(this, 470, 230, 80, 30);
   btnSetMedium.setText("Set Medium");
   btnSetMedium.setTextBold();
   btnSetMedium.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   btnSetMedium.addEventHandler(this, "btnSetMediumClick");
-  btnSetLow = new GButton(this, 470, 260, 80, 30);
-  btnSetLow.setText("Set Baseline");
-  btnSetLow.setTextBold();
-  btnSetLow.setLocalColorScheme(GCScheme.GREEN_SCHEME);
-  btnSetLow.addEventHandler(this, "btnSetLowClick");
+  btnSetBaseline = new GButton(this, 470, 270, 80, 30);
+  btnSetBaseline.setText("Set Baseline");
+  btnSetBaseline.setTextBold();
+  btnSetBaseline.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  btnSetBaseline.addEventHandler(this, "btnSetBaselineClick");
   btnBaselineTrial = new GButton(this, 350, 330, 80, 50);
-  btnBaselineTrial.setText("Load baseline");
+  btnBaselineTrial.setText("Load Baseline");
   btnBaselineTrial.setTextBold();
   btnBaselineTrial.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   btnBaselineTrial.addEventHandler(this, "btnBaselineTrialClick");
@@ -264,6 +264,6 @@ GButton buttonSave;
 GButton btnPrevTrial; 
 GButton btnSetHigh; 
 GButton btnSetMedium; 
-GButton btnSetLow; 
+GButton btnSetBaseline; 
 GButton btnBaselineTrial; 
 
