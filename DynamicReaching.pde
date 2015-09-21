@@ -22,7 +22,7 @@ static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 static final int LOW = 0, MEDIUM = 1, HIGH = 2;
 int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
-static final int ANGLE = 270;
+static final int ANGLE = 360;
 int trialsPerBlock = 10;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
@@ -279,12 +279,10 @@ public class Trial{
   public int ordinal, degrees, direction, setting;  // don't care if outside can read/write
   public double speedToward, speedReturn;  // avg speed going to and coming back from target
   public double initPosToward, termPosToward;
-  public double initPosReturn, termPosReturn;
   public boolean complete;
   
-  public Trial(int degrees, int direction, int speedSetting){
+  public Trial(int degrees, int speedSetting){
     this.degrees = degrees;
-    this.direction = direction;
     this.setting = speedSetting;
     this.complete = false;
   }
@@ -293,7 +291,6 @@ public class Trial{
     return String.format("%d,%d,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%d",
                         ordinal, degrees, direction,
                         speedToward,initPosToward, termPosToward,
-                        speedReturn, initPosReturn, termPosReturn,
                         setting);
   }
   
@@ -302,7 +299,6 @@ public class Trial{
     return String.format("%d  %d  %d\n%.2f  %.2f  %.2f\n%.2f  %.2f  %.2f\n%d",
                           ordinal, degrees, direction,
                           speedToward, initPosToward, termPosToward,
-                          speedReturn, initPosReturn, termPosReturn,
                           setting);
   }
   

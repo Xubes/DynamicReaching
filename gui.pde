@@ -22,18 +22,12 @@ public void btnResetDeltaClick(GButton source, GEvent event) { //_CODE_:btnReset
 public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123:
   //println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
   // Reset position on first spin of trial.
+  btnNextTrial.setEnabled(false);
+  btnPrevTrial.setEnabled(false); 
   long startTime;
-  if(direction==currentTrial.direction){
-    resetPosition();
-    startTime = millis();
-    btnNextTrial.setEnabled(false);
-    btnPrevTrial.setEnabled(false);
-    while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
-  }
-  else{
-    btnNextTrial.setEnabled(true);
-    btnPrevTrial.setEnabled(true);
-  }
+  resetPosition();
+  
+  while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
   
   double startPosition = anglePosition;
   startTime = millis();
@@ -42,21 +36,16 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
     double stopTime = millis();
     double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
     if(currentTrial!=null){
-      if(direction==currentTrial.direction){
+        currentTrial.direction = direction;
         currentTrial.speedToward = avgVelocity;
         currentTrial.initPosToward = startPosition;
         currentTrial.termPosToward = endPosition;
-        currentTrial.complete = false;
-      }
-      else{
-        currentTrial.speedReturn = avgVelocity;
-        currentTrial.initPosReturn = startPosition;
-        currentTrial.termPosReturn = endPosition;
         currentTrial.complete = true;
       }
     }
     direction *= -1;  // next spin will go in opposite direction
   }
+  
   if(currentTrial.isComplete() && !baselineFlag){
     nextTrial();
   }
