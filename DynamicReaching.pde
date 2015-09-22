@@ -26,7 +26,7 @@ static final int ANGLE = 360;
 int trialsPerBlock = 20;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
-static Trial currentTrial;
+Trial currentTrial;
 static PrintWriter output;
 Trial baselineTrial, tempTrial;
 boolean baselineFlag = false;
@@ -63,8 +63,8 @@ void setup(){
   degrees2Rotate = ANGLE;
   settings[MEDIUM][0] = power;
   settings[MEDIUM][1] = brake;
-  currentTrial = new Trial(ANGLE, direction, MEDIUM);
-  baselineTrial = new Trial(ANGLE, direction, LOW);
+  currentTrial = new Trial(ANGLE, MEDIUM);
+  baselineTrial = new Trial(ANGLE, LOW);
   tempTrial = baselineTrial;
   // Open output file.
   try{
@@ -256,7 +256,7 @@ LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
   for(int i=0; i<trialsPerSpeed; i++){
     Collections.shuffle(set);
     for(int s : set){
-      myTrials.add(new Trial(ANGLE, direction, s));
+      myTrials.add(new Trial(ANGLE, s));
     }
   }
   
@@ -268,7 +268,7 @@ LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
   
   // Add 4 baseline (LOW) trials to the beginning.
   for(int i=0; i<4; i++){
-    myTrials.addFirst(new Trial(ANGLE, direction, LOW));
+    myTrials.addFirst(new Trial(ANGLE, LOW));
   }
   
   return myTrials;  
@@ -288,7 +288,7 @@ public class Trial{
   }
   
   public String toString(){
-    return String.format("%d,%d,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%d",
+    return String.format("%d,%d,%d,%.3f,%.3f,%.3f,%d",
                         ordinal, degrees, direction,
                         speedToward,initPosToward, termPosToward,
                         setting);
@@ -296,7 +296,7 @@ public class Trial{
   
   /* Alternate toString for the display window. */
   public String toString2(){
-    return String.format("%d  %d  %d\n%.2f  %.2f  %.2f\n%.2f  %.2f  %.2f\n%d",
+    return String.format("%d  %d  %d\n%.2f  %.2f  %.2f\n%d",
                           ordinal, degrees, direction,
                           speedToward, initPosToward, termPosToward,
                           setting);
@@ -334,7 +334,7 @@ public static void saveToFile(File file){
 /* Updates the global vars to the given trial's parameters. */
 public void setTrial(Trial t){
   this.currentTrial = t;
-//  this.direction = t.direction;
+  //this.direction = t.direction;
   this.degrees2Rotate = t.degrees;
   this.power = settings[t.setting][0];
   this.brake = settings[t.setting][1];

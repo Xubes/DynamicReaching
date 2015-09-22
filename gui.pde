@@ -27,6 +27,7 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
   long startTime;
   resetPosition();
   
+  startTime = millis();
   while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
   
   double startPosition = anglePosition;
@@ -42,7 +43,6 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
         currentTrial.termPosToward = endPosition;
         currentTrial.complete = true;
       }
-    }
     direction *= -1;  // next spin will go in opposite direction
   }
   
