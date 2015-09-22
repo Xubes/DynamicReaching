@@ -23,7 +23,7 @@ static final double EPS = 1e-9;
 static final int LOW = 0, MEDIUM = 1, HIGH = 2;
 int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
 static final int ANGLE = 360;
-int trialsPerBlock = 10;  // number of rotations per speed setting
+int trialsPerBlock = 20;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
 static Trial currentTrial;
@@ -334,7 +334,7 @@ public static void saveToFile(File file){
 /* Updates the global vars to the given trial's parameters. */
 public void setTrial(Trial t){
   this.currentTrial = t;
-  this.direction = t.direction;
+//  this.direction = t.direction;
   this.degrees2Rotate = t.degrees;
   this.power = settings[t.setting][0];
   this.brake = settings[t.setting][1];
