@@ -87,7 +87,15 @@ void setup(){
 void draw(){
   background(255);
   fill(255,0,0);
-  labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f",anglePosition, angleDelta,angularVelocity));
+  StringBuilder sb = new StringBuilder();
+  for(int i=0; i<settings.length; i++){
+    for(int j=0; j<settings[i].length; j++){
+      sb.append(settings[i][j]);
+      sb.append(",");
+    }
+    sb.append("\n");
+  }
+  labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f\n%s",anglePosition, angleDelta,angularVelocity, sb.toString()));
   String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
   if(currentTrial!=null){
     //displayStr += String.format("\nTrial:\t%d, %d", currentTrial.degrees, currentTrial.direction);
