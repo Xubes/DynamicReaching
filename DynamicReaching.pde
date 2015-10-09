@@ -344,6 +344,8 @@ public void setTrial(Trial t){
 public void nextTrial(){
   if(currentTrial!=null){
     output.println(currentTrial);
+    return if baselineFlag;
+    
     if(li!=null && li.hasNext()){
       setTrial(li.next());
     }
