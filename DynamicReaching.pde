@@ -20,16 +20,17 @@ int power, brake, direction, degrees2Rotate;
 static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
-static final int LOW = 0, MEDIUM = 1, HIGH = 2;
-int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
+static final int LOW_180 = 0, LOW = 1, MEDIUM = 2, HIGH = 3;
+int[][] settings = { {50, 0}, {50, 0}, {50, 0}, {50, 0} };
 static final int ANGLE = 360;
 int trialsPerBlock = 40;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
 Trial currentTrial;
 static PrintWriter output;
-Trial baselineTrial, tempTrial;
+Trial baselineTrial, tempTrial, baseline180Trial;
 boolean baselineFlag = false;
+boolean baseline180Flag = false;
 
 void setup(){
   size(600,400);
@@ -61,10 +62,9 @@ void setup(){
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
   degrees2Rotate = ANGLE;
-  settings[MEDIUM][0] = power;
-  settings[MEDIUM][1] = brake;
   currentTrial = new Trial(ANGLE, MEDIUM);
   baselineTrial = new Trial(ANGLE, LOW);
+  baseline180Trial = new Trial(180, LOW180);
   tempTrial = baselineTrial;
   // Open output file.
   try{

@@ -132,6 +132,28 @@ public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBa
   //println("btnBaselineTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnBaselineTrial:476833:
 
+public void btn180TrialClick(GButton source, GEvent event) { //_CODE_:btn180Trial:288071:
+  if(baseline180Flag){
+    System.err.println("Resuming experiment");
+    setTrial(tempTrial);
+    source.setText("Load 180");
+  }
+  else{
+    System.err.println("Loading 180 degree trial");
+    tempTrial = currentTrial;
+    setTrial(baseline180Trial);
+    source.setText("Resume experiment");
+  }
+  baseline180Flage = !baseline180Flag;
+  //println("btn180Trial - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btn180Trial:288071:
+
+public void btnSet180Click(GButton source, GEvent event) { //_CODE_:btnSet180:750451:
+  settings[LOW180][0] = power;
+  settings[LOW180][1] = brake;
+  //println("btnSet180 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:btnSet180:750451:
+
 
 
 // Create all the GUI controls. 
@@ -146,7 +168,7 @@ public void createGUI(){
   btnResetDelta.setText("Reset Delta");
   btnResetDelta.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
   btnResetDelta.addEventHandler(this, "btnResetDeltaClick");
-  btnSpin = new GButton(this, 40, 330, 211, 50);
+  btnSpin = new GButton(this, 110, 330, 140, 50);
   btnSpin.setText("Spin!");
   btnSpin.setTextBold();
   btnSpin.setLocalColorScheme(GCScheme.GREEN_SCHEME);
@@ -165,7 +187,7 @@ public void createGUI(){
   csliderBrake.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   csliderBrake.setOpaque(true);
   csliderBrake.addEventHandler(this, "csliderBrakeChange");
-  buttonReverse = new GButton(this, 270, 330, 70, 50);
+  buttonReverse = new GButton(this, 40, 330, 60, 50);
   buttonReverse.setText("Reverse");
   buttonReverse.addEventHandler(this, "buttonReverseClick");
   labelPowerSlider = new GLabel(this, 270, 300, 70, 20);
@@ -213,17 +235,17 @@ public void createGUI(){
   btnPrevTrial = new GButton(this, 450, 130, 120, 40);
   btnPrevTrial.setText("Previous Trial");
   btnPrevTrial.addEventHandler(this, "btnPrevTrialClick");
-  btnSetHigh = new GButton(this, 470, 190, 80, 30);
+  btnSetHigh = new GButton(this, 470, 180, 80, 30);
   btnSetHigh.setText("Set High");
   btnSetHigh.setTextBold();
   btnSetHigh.setLocalColorScheme(GCScheme.RED_SCHEME);
   btnSetHigh.addEventHandler(this, "btnSetHighClick");
-  btnSetMedium = new GButton(this, 470, 230, 80, 30);
+  btnSetMedium = new GButton(this, 470, 220, 80, 30);
   btnSetMedium.setText("Set Medium");
   btnSetMedium.setTextBold();
   btnSetMedium.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   btnSetMedium.addEventHandler(this, "btnSetMediumClick");
-  btnSetBaseline = new GButton(this, 470, 270, 80, 30);
+  btnSetBaseline = new GButton(this, 470, 260, 80, 30);
   btnSetBaseline.setText("Set Baseline");
   btnSetBaseline.setTextBold();
   btnSetBaseline.setLocalColorScheme(GCScheme.GREEN_SCHEME);
@@ -233,6 +255,16 @@ public void createGUI(){
   btnBaselineTrial.setTextBold();
   btnBaselineTrial.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   btnBaselineTrial.addEventHandler(this, "btnBaselineTrialClick");
+  btn180Trial = new GButton(this, 260, 330, 80, 50);
+  btn180Trial.setText("Load 180");
+  btn180Trial.setTextBold();
+  btn180Trial.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  btn180Trial.addEventHandler(this, "btn180TrialClick");
+  btnSet180 = new GButton(this, 470, 300, 80, 30);
+  btnSet180.setText("Set 180");
+  btnSet180.setTextBold();
+  btnSet180.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  btnSet180.addEventHandler(this, "btnSet180Click");
 }
 
 // Variable declarations 
@@ -255,4 +287,6 @@ GButton btnSetHigh;
 GButton btnSetMedium; 
 GButton btnSetBaseline; 
 GButton btnBaselineTrial; 
+GButton btn180Trial; 
+GButton btnSet180; 
 
