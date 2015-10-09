@@ -23,7 +23,7 @@ static final double EPS = 1e-9;
 static final int LOW = 0, MEDIUM = 1, HIGH = 2;
 int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
 static final int ANGLE = 360;
-int trialsPerBlock = 20;  // number of rotations per speed setting
+int trialsPerBlock = 40;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
 Trial currentTrial;
