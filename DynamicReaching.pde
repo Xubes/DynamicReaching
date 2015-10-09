@@ -64,7 +64,7 @@ void setup(){
   degrees2Rotate = ANGLE;
   currentTrial = new Trial(ANGLE, MEDIUM);
   baselineTrial = new Trial(ANGLE, LOW);
-  baseline180Trial = new Trial(180, LOW180);
+  baseline180Trial = new Trial(180, LOW_180);
   tempTrial = baselineTrial;
   // Open output file.
   try{
@@ -344,7 +344,7 @@ public void setTrial(Trial t){
 public void nextTrial(){
   if(currentTrial!=null){
     output.println(currentTrial);
-    return if baselineFlag;
+    if(baselineFlag || baseline180Flag) return;
     
     if(li!=null && li.hasNext()){
       setTrial(li.next());

@@ -144,13 +144,13 @@ public void btn180TrialClick(GButton source, GEvent event) { //_CODE_:btn180Tria
     setTrial(baseline180Trial);
     source.setText("Resume experiment");
   }
-  baseline180Flage = !baseline180Flag;
+  baseline180Flag = !baseline180Flag;
   //println("btn180Trial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btn180Trial:288071:
 
 public void btnSet180Click(GButton source, GEvent event) { //_CODE_:btnSet180:750451:
-  settings[LOW180][0] = power;
-  settings[LOW180][1] = brake;
+  settings[LOW_180][0] = power;
+  settings[LOW_180][1] = brake;
   //println("btnSet180 - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnSet180:750451:
 
