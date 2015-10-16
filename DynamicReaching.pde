@@ -21,6 +21,7 @@ static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
+static final double EARLY_BRAKE_THRESHOLD = 5.0; // chair will send brake command when within this many degrees of target
 static final int LOW_180 = 0, LOW = 1, MEDIUM = 2, HIGH = 3;
 int[][] settings = { {50, 0}, {50, 0}, {50, 0}, {50, 0} };
 static final int ANGLE = 360;
@@ -34,6 +35,8 @@ Trial baselineTrial, tempTrial, baseline180Trial;
 boolean baselineFlag = false;
 boolean baseline180Flag = false;
 boolean returnSpin = false;
+boolean experimentStarted = false;
+boolean spinning = false;
 
 void setup(){
   size(600,400);
@@ -185,15 +188,23 @@ boolean spin(int degrees, int direction){
   double prevVelocity = angularVelocity;  // use to check if accelerating
   
   // Send initial command to start moving.
+//  System.err.println("Sending initial command");
   sendCommandF(command);
   
   // Wait until acceleration is detected.
+//  System.err.println("Waiting for motion");
+  long timeout = millis();
   while( Math.abs(angularVelocity-prevVelocity) < EPS){
     prevVelocity = angularVelocity;
     redraw();
+    if(millis() - timeout > 1000){
+      System.err.println("Failed to detect initial motion. Please increase power.");
+      return false;
+    }
   }
+//  System.err.println("Got initial motion");
   
-  // Re-apply power as needed until chair has rotated "almost" 180.
+  // Re-apply power as needed.
   // This is adjusted by the brake slider.
   while(distance < (degrees-brake)){
     distance = abs(anglePosition-startPosition);
@@ -213,11 +224,16 @@ boolean spin(int degrees, int direction){
       sendCommand(command);
     }
   }
+  
+//  System.err.println("Turning off power");
+  
   // Wait until chair stops spinning AND chair has moved (to prevent early exit on short and fast spins).
   while(abs(angularVelocity) >= 2.0  || distance < 10){
     distance = abs(anglePosition-startPosition);
     // Apply brake if distance gte desire
-    if(distance >= degrees) sendCommand(0);
+    if(distance >= degrees-EARLY_BRAKE_THRESHOLD){
+      sendCommand(0);
+    }
     redraw();
   }
 
@@ -344,18 +360,18 @@ public static void saveToFile(File file){
 
 /* Updates the global vars to the given trial's parameters. */
 public void setTrial(Trial t){
-  this.currentTrial = t;
+  currentTrial = t;
   //this.direction = t.direction;
-  this.degrees2Rotate = t.degrees;
-  this.power = settings[t.setting][0];
-  this.brake = settings[t.setting][1];
+  degrees2Rotate = t.degrees;
+  power = settings[t.setting][0];
+  brake = settings[t.setting][1];
 }
 
 /* Advance to next trial if available. */
 public void nextTrial(){
   if(currentTrial!=null){
     output.println(currentTrial);
-    if(!returnSpin){
+    if(!returnSpin && experimentStarted){
       trialsRun.add(currentTrial);
     }
     
@@ -363,6 +379,7 @@ public void nextTrial(){
     
     if(li!=null && li.hasNext()){
       setTrial(li.next());
+      System.err.println("Next trial: " + currentTrial);
     }
     else{
       System.err.println("No next trial found!");

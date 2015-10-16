@@ -22,13 +22,17 @@ public void btnResetDeltaClick(GButton source, GEvent event) { //_CODE_:btnReset
 public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123:
   //println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
   // Reset position on first spin of trial.
-  btnNextTrial.setEnabled(false);
-  btnPrevTrial.setEnabled(false); 
+  
+  if(experimentStarted){
+    setTrial(currentTrial);
+  }
   long startTime;
   resetPosition();
   
   startTime = millis();
   while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
+  
+  System.err.println("Spinning");
   
   double startPosition = anglePosition;
   startTime = millis();
@@ -54,6 +58,12 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
       returnSpin = !returnSpin;
     }
   }
+  else{
+    System.err.println("Something happened! Failed to spin!");
+  }
+  
+  System.err.println("Done spinning.");
+
 } //_CODE_:btnSpin:521123:
 
 public void csliderBrakeChange(GCustomSlider source, GEvent event) { //_CODE_:csliderBrake:657048:
@@ -85,6 +95,7 @@ public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:bt
   li = trials2Run.listIterator();
   setTrial(li.next());
   source.setEnabled(false);
+  experimentStarted = true;
   //println("btnGenerateTrials - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnGenerateTrials:224544:
 
