@@ -36,7 +36,7 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
     double endPosition = anglePosition;
     double stopTime = millis();
     double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
-    if(currentTrial!=null){
+    if(currentTrial!=null && !returnSpin){
         currentTrial.direction = direction;
         currentTrial.speedToward = avgVelocity;
         currentTrial.initPosToward = startPosition;
@@ -47,6 +47,11 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
     
     if(currentTrial.isComplete()){
       nextTrial();
+    }
+    
+    // Flip return spin flag if we are doing 180 trials.
+    if(baseline180Flag){
+      returnSpin = !returnSpin;
     }
   }
 } //_CODE_:btnSpin:521123:
@@ -123,7 +128,7 @@ public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBa
     
     btn180Trial.setEnabled(true);
     btnNextTrial.setEnabled(true);
-    btnPreviousTrial.setEnabled(true);
+    btnPrevTrial.setEnabled(true);
   }
   else{
     System.err.println("Loading baseline trial");
@@ -134,7 +139,7 @@ public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBa
     // Disable btn180Trial
     btn180Trial.setEnabled(false);
     btnNextTrial.setEnabled(false);
-    btnPreviousTrial.setEnabled(false);
+    btnPrevTrial.setEnabled(false);
   }
   baselineFlag = !baselineFlag;
   redraw();  
@@ -149,7 +154,7 @@ public void btn180TrialClick(GButton source, GEvent event) { //_CODE_:btn180Tria
     
     // Enable buttons
     btnNextTrial.setEnabled(true);
-    btnPreviousTrial.setEnabled(true);
+    btnPrevTrial.setEnabled(true);
     btnBaselineTrial.setEnabled(true);
   }
   else{
@@ -160,7 +165,7 @@ public void btn180TrialClick(GButton source, GEvent event) { //_CODE_:btn180Tria
     
     // disable buttons
     btnNextTrial.setEnabled(false);
-    btnPreviousTrial.setEnabled(false);
+    btnPrevTrial.setEnabled(false);
     btnBaselineTrial.setEnabled(false);
   }
   baseline180Flag = !baseline180Flag;

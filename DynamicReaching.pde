@@ -33,6 +33,7 @@ static PrintWriter output;
 Trial baselineTrial, tempTrial, baseline180Trial;
 boolean baselineFlag = false;
 boolean baseline180Flag = false;
+boolean returnSpin = false;
 
 void setup(){
   size(600,400);
@@ -334,7 +335,7 @@ public static void saveToFile(File file){
   }
 
   // Wite out to the file.
-  for(Trial t : trials2Run){
+  for(Trial t : trialsRun){
     printer.println(t);
   }
   
@@ -354,6 +355,10 @@ public void setTrial(Trial t){
 public void nextTrial(){
   if(currentTrial!=null){
     output.println(currentTrial);
+    if(!returnSpin){
+      trialsRun.add(currentTrial);
+    }
+    
     if(baselineFlag || baseline180Flag) return;
     
     if(li!=null && li.hasNext()){
