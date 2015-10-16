@@ -92,12 +92,12 @@ public void btnGenerateTrialsClicked(GButton source, GEvent event) { //_CODE_:bt
   trials2Run = generateTrials(trialsPerBlock, direction);
   // Print trials to console
   for(Trial t : trials2Run) System.err.println(t);
-  
   // Set the current trial.
   li = trials2Run.listIterator();
   setTrial(li.next());
-  source.setEnabled(false);
+  currentTrial.ordinal = 1;
   experimentStarted = true;
+  source.setEnabled(false);
   //println("btnGenerateTrials - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnGenerateTrials:224544:
 
