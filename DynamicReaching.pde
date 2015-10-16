@@ -290,11 +290,11 @@ LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
     }
   }
   
-  // Set ordinal for each trial (the trial number).
-  int ctr = 1;
-  for(Trial t : myTrials){
-    t.ordinal = ctr++;
-  }
+//  // Set ordinal for each trial (the trial number).
+//  int ctr = 1;
+//  for(Trial t : myTrials){
+//    t.ordinal = ctr++;
+//  }
   
 //  // Add 4 baseline (LOW) trials to the beginning.
 //  for(int i=0; i<4; i++){
@@ -384,6 +384,9 @@ public void nextTrial(){
     
     if(li!=null && li.hasNext()){
       setTrial(li.next());
+      if(experimentStarted){
+        currentTrial.ordinal = trialsRun.size()+1;
+      }
       System.err.println("Next trial: " + currentTrial);
     }
     else{
