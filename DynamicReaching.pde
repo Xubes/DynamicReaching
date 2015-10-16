@@ -20,6 +20,7 @@ int power, brake, direction, degrees2Rotate;
 static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
+static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
 static final int LOW_180 = 0, LOW = 1, MEDIUM = 2, HIGH = 3;
 int[][] settings = { {50, 0}, {50, 0}, {50, 0}, {50, 0} };
 static final int ANGLE = 360;
@@ -27,6 +28,7 @@ int trialsPerBlock = 40;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
 Trial currentTrial;
+static ArrayList<Trial> trialsRun; // list of finished trials
 static PrintWriter output;
 Trial baselineTrial, tempTrial, baseline180Trial;
 boolean baselineFlag = false;
@@ -174,7 +176,7 @@ boolean spin(int degrees, int direction){
   resetDelta();
   
   // Do nothing if chair not stationary.  Return false.
-  if(angularVelocity > 1.0){ 
+  if(angularVelocity > CHAIR_START_SAFETY){ 
     System.err.println("Chair not stationary. Refusing to spin.");
     return false;
   }
