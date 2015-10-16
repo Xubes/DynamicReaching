@@ -296,12 +296,12 @@ LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
     t.ordinal = ctr++;
   }
   
-  // Add 4 baseline (LOW) trials to the beginning.
-  for(int i=0; i<4; i++){
-    Trial t = new Trial(ANGLE, LOW);
-    t.ordinal = -i-1;
-    myTrials.addFirst(t);
-  }
+//  // Add 4 baseline (LOW) trials to the beginning.
+//  for(int i=0; i<4; i++){
+//    Trial t = new Trial(ANGLE, LOW);
+//    t.ordinal = -i-1;
+//    myTrials.addFirst(t);
+//  }
   
   return myTrials;  
 }
