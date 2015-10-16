@@ -44,10 +44,10 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
         currentTrial.complete = true;
       }
     direction *= -1;  // next spin will go in opposite direction
-  }
-  
-  if(currentTrial.isComplete()){
-    nextTrial();
+    
+    if(currentTrial.isComplete()){
+      nextTrial();
+    }
   }
 } //_CODE_:btnSpin:521123:
 
