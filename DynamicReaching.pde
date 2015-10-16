@@ -29,7 +29,7 @@ int trialsPerBlock = 40;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
 Trial currentTrial;
-static ArrayList<Trial> trialsRun; // list of finished trials
+static ArrayList<Trial> trialsRun = new ArrayList<Trial>(); // list of finished trials
 static PrintWriter output;
 Trial baselineTrial, tempTrial, baseline180Trial;
 boolean baselineFlag = false;
@@ -37,6 +37,9 @@ boolean baseline180Flag = false;
 boolean returnSpin = false;
 boolean experimentStarted = false;
 boolean spinning = false;
+
+static final int BASELINE_MOD = 2000;
+static final int BASELINE180_MOD = 1000;
 
 void setup(){
   size(600,400);
@@ -295,7 +298,9 @@ LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
   
   // Add 4 baseline (LOW) trials to the beginning.
   for(int i=0; i<4; i++){
-    myTrials.addFirst(new Trial(ANGLE, LOW));
+    Trial t = new Trial(ANGLE, LOW);
+    t.ordinal = -i-1;
+    myTrials.addFirst(t);
   }
   
   return myTrials;  

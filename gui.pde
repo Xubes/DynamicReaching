@@ -23,6 +23,8 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
   //println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
   // Reset position on first spin of trial.
   
+  source.setEnabled(false);
+  
   if(experimentStarted){
     setTrial(currentTrial);
   }
@@ -63,7 +65,7 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
   }
   
   System.err.println("Done spinning.");
-
+  source.setEnabled(true);
 } //_CODE_:btnSpin:521123:
 
 public void csliderBrakeChange(GCustomSlider source, GEvent event) { //_CODE_:csliderBrake:657048:
