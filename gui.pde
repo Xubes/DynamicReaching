@@ -120,12 +120,21 @@ public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBa
     System.err.println("Resuming experiment");
     setTrial(tempTrial);
     source.setText("Load baseline");
+    
+    btn180Trial.setEnabled(true);
+    btnNextTrial.setEnabled(true);
+    btnPreviousTrial.setEnabled(true);
   }
   else{
     System.err.println("Loading baseline trial");
     tempTrial = currentTrial;
     setTrial(baselineTrial);
     source.setText("Resume experiment");
+    
+    // Disable btn180Trial
+    btn180Trial.setEnabled(false);
+    btnNextTrial.setEnabled(false);
+    btnPreviousTrial.setEnabled(false);
   }
   baselineFlag = !baselineFlag;
   redraw();  
@@ -137,12 +146,22 @@ public void btn180TrialClick(GButton source, GEvent event) { //_CODE_:btn180Tria
     System.err.println("Resuming experiment");
     setTrial(tempTrial);
     source.setText("Load 180");
+    
+    // Enable buttons
+    btnNextTrial.setEnabled(true);
+    btnPreviousTrial.setEnabled(true);
+    btnBaselineTrial.setEnabled(true);
   }
   else{
     System.err.println("Loading 180 degree trial");
     tempTrial = currentTrial;
     setTrial(baseline180Trial);
     source.setText("Resume experiment");
+    
+    // disable buttons
+    btnNextTrial.setEnabled(false);
+    btnPreviousTrial.setEnabled(false);
+    btnBaselineTrial.setEnabled(false);
   }
   baseline180Flag = !baseline180Flag;
   //println("btn180Trial - GButton >> GEvent." + event + " @ " + millis());
