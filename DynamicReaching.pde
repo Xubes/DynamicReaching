@@ -29,6 +29,7 @@ int trialsPerBlock = 40;  // number of rotations per speed setting
 static LinkedList<Trial> trials2Run;  // list of trials
 static ListIterator<Trial> li;
 Trial currentTrial;
+Trial prevTrial;
 static ArrayList<Trial> trialsRun = new ArrayList<Trial>(); // list of finished trials
 static PrintWriter output;
 Trial baselineTrial, tempTrial, baseline180Trial;
@@ -37,6 +38,7 @@ boolean baseline180Flag = false;
 boolean returnSpin = false;
 boolean experimentStarted = false;
 boolean spinning = false;
+int trialOrdCtr = 1;
 
 static final int BASELINE_MOD = 2000;
 static final int BASELINE180_MOD = 1000;
@@ -96,6 +98,7 @@ void setup(){
 void draw(){
   background(255);
   fill(255,0,0);
+    
   StringBuilder sb = new StringBuilder();
   for(int i=0; i<settings.length; i++){
     for(int j=0; j<settings[i].length; j++){
@@ -105,13 +108,19 @@ void draw(){
     sb.append("\n");
   }
   labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f\n%s",anglePosition, angleDelta,angularVelocity, sb.toString()));
+  
   String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
+  
   if(currentTrial!=null){
     //displayStr += String.format("\nTrial:\t%d, %d", currentTrial.degrees, currentTrial.direction);
     displayStr += "\n" + currentTrial.toString2();
   }
   else{
     displayStr += "\n" + degrees2Rotate;
+  }
+  
+  if(prevTrial != null){
+    displayStr += "\nPrevious spin:\n" + prevTrial.toString2();
   }
   labelDisplay.setText(displayStr);
 }
@@ -370,23 +379,31 @@ public void setTrial(Trial t){
   degrees2Rotate = t.degrees;
   power = settings[t.setting][0];
   brake = settings[t.setting][1];
+  
+  if(experimentStarted){
+    currentTrial.ordinal = trialsRun.size() + 1;
+  }
 }
 
 /* Advance to next trial if available. */
 public void nextTrial(){
   if(currentTrial!=null){
     output.println(currentTrial);
-    if(!returnSpin && experimentStarted){
+    
+    prevTrial = currentTrial;
+    
+    if(returnSpin) return; // do nothing if return spin
+    
+    if(experimentStarted){
       trialsRun.add(currentTrial);
     }
     
-    if(baselineFlag || baseline180Flag) return;
+    if(baselineFlag || baseline180Flag){
+      return;
+    }
     
     if(li!=null && li.hasNext()){
       setTrial(li.next());
-      if(experimentStarted){
-        currentTrial.ordinal = trialsRun.size()+1;
-      }
       System.err.println("Next trial: " + currentTrial);
     }
     else{

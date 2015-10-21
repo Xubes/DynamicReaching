@@ -153,9 +153,13 @@ public void btnBaselineTrialClick(GButton source, GEvent event) { //_CODE_:btnBa
     btn180Trial.setEnabled(false);
     btnNextTrial.setEnabled(false);
     btnPrevTrial.setEnabled(false);
+    
+    if(experimentStarted){
+      currentTrial.ordinal = trialsRun.size()+1;
+    }
   }
   baselineFlag = !baselineFlag;
-  redraw();  
+  
   //println("btnBaselineTrial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btnBaselineTrial:476833:
 
@@ -180,8 +184,13 @@ public void btn180TrialClick(GButton source, GEvent event) { //_CODE_:btn180Tria
     btnNextTrial.setEnabled(false);
     btnPrevTrial.setEnabled(false);
     btnBaselineTrial.setEnabled(false);
+    
+    if(experimentStarted){
+      currentTrial.ordinal = trialsRun.size()+1;
+    }
   }
   baseline180Flag = !baseline180Flag;
+  
   //println("btn180Trial - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:btn180Trial:288071:
 
