@@ -17,31 +17,20 @@ double angularVelocity;  // velocity from Arduino
 long lastCommandTime;
 int lastCommand;  // store the last command sent
 int power, brake, direction, degrees2Rotate;
-static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
+static final int COMMAND_INTERVAL = 10;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
 static final double EARLY_BRAKE_THRESHOLD = 5.0; // chair will send brake command when within this many degrees of target
-static final int LOW_180 = 0, LOW = 1, MEDIUM = 2, HIGH = 3;
-int[][] settings = { {50, 0}, {50, 0}, {50, 0}, {50, 0} };
-static final int ANGLE = 360;
+static final int LOW_180 = 0, LOW = 1, HIGH = 2;
+int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
 int trialsPerBlock = 40;  // number of rotations per speed setting
-static LinkedList<Trial> trials2Run;  // list of trials
-static ListIterator<Trial> li;
 Trial currentTrial;
-Trial prevTrial;
 static ArrayList<Trial> trialsRun = new ArrayList<Trial>(); // list of finished trials
 static PrintWriter output;
-Trial baselineTrial, tempTrial, baseline180Trial;
 boolean baselineFlag = false;
 boolean baseline180Flag = false;
-boolean returnSpin = false;
 boolean experimentStarted = false;
-boolean spinning = false;
-int trialOrdCtr = 1;
-
-static final int BASELINE_MOD = 2000;
-static final int BASELINE180_MOD = 1000;
 
 void setup(){
   size(600,400);
@@ -72,11 +61,9 @@ void setup(){
   power = csliderPower.getValueI();
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
-  degrees2Rotate = ANGLE;
-  currentTrial = new Trial(ANGLE, MEDIUM);
-  baselineTrial = new Trial(ANGLE, LOW);
-  baseline180Trial = new Trial(180, LOW_180);
-  tempTrial = baselineTrial;
+  
+  currentTrial = new Trial(180, LOW); // Default trial is 180 low
+
   // Open output file.
   try{
     output = new PrintWriter("DynamicReaching" + System.currentTimeMillis() + ".csv");
@@ -119,9 +106,9 @@ void draw(){
     displayStr += "\n" + degrees2Rotate;
   }
   
-  if(prevTrial != null){
-    displayStr += "\nPrevious spin:\n" + prevTrial.toString2();
-  }
+//  if(prevTrial != null){
+//    displayStr += "\nPrevious spin:\n" + prevTrial.toString2();
+//  }
   labelDisplay.setText(displayStr);
 }
 
@@ -280,58 +267,28 @@ double abs(double x){
   return Math.abs(x);
 }
 
-/* Generate trials array.  Returns a list of trial objects.
-   Creates a semi-random order of trials for high and medium speed settings.
-   Ensures that there are no more than two consecutive trials with the same setting.
-   Prepends 4 LOW setting trials.
-   Arguments:
-     trialsPerSpeed : number of trials for each speed setting
-     direction  : direction of spin for all trials.
-   */
-LinkedList<Trial> generateTrials(int trialsPerSpeed, int direction){
-  LinkedList<Trial> myTrials = new LinkedList<Trial>();
-  ArrayList<Integer> set = new ArrayList<Integer>();
-  set.add(MEDIUM); set.add(HIGH);
-  for(int i=0; i<trialsPerSpeed; i++){
-    Collections.shuffle(set);
-    for(int s : set){
-      myTrials.add(new Trial(ANGLE, s));
-    }
-  }
-  
-//  // Set ordinal for each trial (the trial number).
-//  int ctr = 1;
-//  for(Trial t : myTrials){
-//    t.ordinal = ctr++;
-//  }
-  
-//  // Add 4 baseline (LOW) trials to the beginning.
-//  for(int i=0; i<4; i++){
-//    Trial t = new Trial(ANGLE, LOW);
-//    t.ordinal = -i-1;
-//    myTrials.addFirst(t);
-//  }
-  
-  return myTrials;  
-}
 
 /* Class to hold information about each trial.  For now the degrees turn and direction of turn. */
 public class Trial{
-  public int ordinal, degrees, direction, setting;  // don't care if outside can read/write
-  public double speedToward, speedReturn;  // avg speed going to and coming back from target
-  public double initPosToward, termPosToward;
-  public boolean complete;
+  // Note direction is always spin direction towards target
+  public int ordinal, degrees, direction, setting;
+  public double speedTowards, speedReturn;  // avg speed going to and coming back from target
+  public double initPosTowards, termPosTowards, initPosReturn, termPosReturn;
+  public boolean complete, spinTowards;
+  public int spins;  // remaining spins
   
   public Trial(int degrees, int speedSetting){
     this.degrees = degrees;
     this.setting = speedSetting;
     this.complete = false;
+    degrees = (degrees==360)? 1 : 2;
+    spinTowards = true;
   }
   
   public String toString(){
     return String.format("%d,%d,%d,%.3f,%.3f,%.3f,%d",
                         ordinal, degrees, direction,
-                        speedToward,initPosToward, termPosToward,
+                        speedTowards,initPosTowards, termPosTowards,
                         setting);
   }
   
@@ -339,7 +296,7 @@ public class Trial{
   public String toString2(){
     return String.format("%d  %d  %d\n%.2f  %.2f  %.2f\n%d",
                           ordinal, degrees, direction,
-                          speedToward, initPosToward, termPosToward,
+                          speedTowards, initPosTowards, termPosTowards,
                           setting);
   }
   
@@ -347,9 +304,29 @@ public class Trial{
   public boolean isComplete(){
     return complete;
   }
+  
+  /* Decrement the spin counter. Set complete true if no more spins remaining. */
+  public void nextSpin(){
+    complete = --spins == 0;
+  }
+  
+  /* Set data after a spin. */
+  public void setResult(double initPos, double termPos, double speed){
+    if(spinTowards){
+      initPosTowards = initPos;
+      termPosTowards = termPos;
+      speedTowards = speed;
+      this.direction = direction;
+    }
+    else{
+      initPosReturn = initPos;
+      termPosReturn = termPos;
+      speedReturn = speed;
+    }
+  }
 }
 
-/* Save all the trials in trials2Run to the file. */
+/* Save all the trials in trialsRun to the file. */
 public static void saveToFile(File file){
   if (file==null){
     System.err.println("Error: invalid file selected for saving.");
@@ -385,42 +362,49 @@ public void setTrial(Trial t){
   }
 }
 
-/* Advance to next trial if available. */
+/* Generate next trial. */
 public void nextTrial(){
-  if(currentTrial!=null){
-    output.println(currentTrial);
-    
-    prevTrial = currentTrial;
-    
-    if(returnSpin) return; // do nothing if return spin
-    
-    if(experimentStarted){
-      trialsRun.add(currentTrial);
-    }
-    
-    if(baselineFlag || baseline180Flag){
-      return;
-    }
-    
-    if(li!=null && li.hasNext()){
-      setTrial(li.next());
-      System.err.println("Next trial: " + currentTrial);
+  int nextTrialDegrees = 180, nextTrialSpeed = LOW;
+  
+  if(experimentStarted){
+    if(currentTrial.degrees == 180){
+      nextTrialDegrees = 180;
+      nextTrialSpeed = LOW;
     }
     else{
-      System.err.println("No next trial found!");
+      Trial prevTrial = null;
+      int trs = trialsRun.size();
+      if(trs > 0) prevTrial = trialsRun.get(trs -1);
+      
+      if(prevTrial != null){
+        if(prevTrial.degrees == 180){
+          // prevTrial is 180LOW and currentTrial is 360LOW
+          nextTrialDegrees = 360;
+          nextTrialSpeed = LOW;
+        }
+        else{
+          // prevTrial and currentTrial 360; if prevTrial and currentTrial have matching speeds
+          // use different speed. Otherwise flip coin for speed.
+          if(prevTrial.setting == currentTrial.setting)
+            nextTrialSpeed = (currentTrial.setting == LOW) ? HIGH : LOW;
+          else
+            nextTrialSpeed = (Math.random() < 0.5) ? LOW : HIGH;
+            
+          nextTrialDegrees = 360;
+        }
+      }
+      else{
+        // Less than 2 spins complete.
+        nextTrialDegrees = 180;
+        nextTrialSpeed = LOW;
+      }
     }
-  }  
-}
-
-/* Go back to previous trial if available. */
-public void previousTrial(){
-  if(currentTrial!=null){
-    output.println(currentTrial);
-    if(li!=null && li.hasPrevious()){
-      setTrial(li.previous());
-    }
-    else{
-      System.err.println("No previous trial found!");
-    }
-  }  
+    trialsRun.add(currentTrial);
+  }
+  else{
+    nextTrialDegrees = (optionDegrees180.isSelected()) ? 180 : 360;
+    nextTrialSpeed = (optionSpeedLow.isSelected()) ? LOW : HIGH;
+  }
+  
+  setTrial(new Trial(nextTrialDegrees, nextTrialSpeed));
 }
