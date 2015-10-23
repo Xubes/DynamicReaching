@@ -83,7 +83,7 @@ public void btnStartExperimentClicked(GButton source, GEvent event) { //_CODE_:b
   experimentStarted = true;
   optionSpeedLow.setEnabled(false);
   optionSpeedHigh.setEnabled(false);
-//  togGroupSpeed.setEnabled(false);
+  source.setEnabled(false);
 } //_CODE_:btnStartExperiment:224544:
 
 public void buttonSaveClick(GButton source, GEvent event) { //_CODE_:buttonSave:860221:

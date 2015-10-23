@@ -106,9 +106,10 @@ void draw(){
     displayStr += "\n" + degrees2Rotate;
   }
   
-//  if(prevTrial != null){
-//    displayStr += "\nPrevious spin:\n" + prevTrial.toString2();
-//  }
+  if(trialsRun.size() > 0){
+    Trial prevTrial = trialsRun.get(trialsRun.size() - 1);
+    displayStr += "\nPrevious spin:\n" + prevTrial.toString2();
+  }
   labelDisplay.setText(displayStr);
 }
 
@@ -364,7 +365,7 @@ public void setTrial(Trial t){
 
 /* Generate next trial. */
 public void nextTrial(){
-  int nextTrialDegrees = 180, nextTrialSpeed = LOW;
+  int nextTrialDegrees = 180, nextTrialSpeed = LOW_180;
   
   if(experimentStarted){
     if(currentTrial.degrees == 180){
@@ -402,9 +403,18 @@ public void nextTrial(){
     trialsRun.add(currentTrial);
   }
   else{
-    nextTrialDegrees = (optionDegrees180.isSelected()) ? 180 : 360;
-    nextTrialSpeed = (optionSpeedLow.isSelected()) ? LOW : HIGH;
+    // Calibration phase
+    int degs = (optionDegrees180.isSelected()) ? 180 : 360;
+    int speed = (optionSpeedLow.isSelected()) ? LOW : HIGH;
+    
+    nextTrialDegrees = degs;
+    nextTrialSpeed = speed;
+    
+    // Special case for LOW_180
+    if(degs == 180 && speed == LOW)
+      nextTrialSpeed = LOW_180;
   }
   
+//  System.err.println(nextTrialDegrees + ", " + nextTrialSpeed);
   setTrial(new Trial(nextTrialDegrees, nextTrialSpeed));
 }
