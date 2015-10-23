@@ -80,10 +80,16 @@ public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:bu
 
 public void btnStartExperimentClicked(GButton source, GEvent event) { //_CODE_:btnStartExperiment:224544:
 //  println("btnStartExperiment - GButton >> GEvent." + event + " @ " + millis());
+  source.setEnabled(false);
+  
   experimentStarted = true;
+  optionSpeedLow.setSelected(true);
+  optionDegrees180.setSelected(true);
+  
   optionSpeedLow.setEnabled(false);
   optionSpeedHigh.setEnabled(false);
-  source.setEnabled(false);
+  
+  setTrial(new Trial(180, LOW_180));
 } //_CODE_:btnStartExperiment:224544:
 
 public void buttonSaveClick(GButton source, GEvent event) { //_CODE_:buttonSave:860221:
@@ -112,12 +118,16 @@ public void btnSet180Click(GButton source, GEvent event) { //_CODE_:btnSet180:75
 public void optionDegrees180_clicked1(GOption source, GEvent event) { //_CODE_:optionDegrees180:910358:
 //  println("optionDegree180 - GOption >> GEvent." + event + " @ " + millis());
   currentTrial.degrees = 180;
+  // switch from low to low180 if needed
+  if(currentTrial.setting == LOW) currentTrial.setting = LOW_180;
   setTrial(currentTrial);
 } //_CODE_:optionDegrees180:910358:
 
 public void optionDegrees360_clicked1(GOption source, GEvent event) { //_CODE_:optionDegrees360:996744:
 //  println("optionDegree360 - GOption >> GEvent." + event + " @ " + millis());
   currentTrial.degrees = 360;
+  // switch from low180 to low if needed
+  if(currentTrial.setting == LOW_180) currentTrial.setting = LOW;
   setTrial(currentTrial);
 } //_CODE_:optionDegrees360:996744:
 
