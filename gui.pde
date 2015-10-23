@@ -42,6 +42,9 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
     double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
     
     currentTrial.setResult(startPosition, endPosition, avgVelocity);
+    
+    if(output != null) output.println(currentTrial);
+    
     currentTrial.nextSpin();
     
     direction *= -1;  // next spin will go in opposite direction
@@ -49,6 +52,7 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
     if(currentTrial.isComplete()){
       nextTrial();
     }
+    
   }
   else{
     System.err.println("Something happened! Failed to spin!");
@@ -157,7 +161,7 @@ public void createGUI(){
   btnResetDelta.setText("Reset Delta");
   btnResetDelta.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
   btnResetDelta.addEventHandler(this, "btnResetDeltaClick");
-  btnSpin = new GButton(this, 110, 330, 140, 50);
+  btnSpin = new GButton(this, 137, 501, 140, 50);
   btnSpin.setText("Spin!");
   btnSpin.setTextBold();
   btnSpin.setLocalColorScheme(GCScheme.GREEN_SCHEME);
@@ -176,7 +180,7 @@ public void createGUI(){
   csliderBrake.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   csliderBrake.setOpaque(true);
   csliderBrake.addEventHandler(this, "csliderBrakeChange");
-  buttonReverse = new GButton(this, 40, 330, 60, 50);
+  buttonReverse = new GButton(this, 40, 500, 60, 50);
   buttonReverse.setText("Reverse");
   buttonReverse.addEventHandler(this, "buttonReverseClick");
   labelPowerSlider = new GLabel(this, 320, 300, 70, 20);
@@ -201,7 +205,7 @@ public void createGUI(){
   csliderPower.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   csliderPower.setOpaque(true);
   csliderPower.addEventHandler(this, "csliderPowerChange");
-  labelDisplay = new GLabel(this, 40, 210, 260, 110);
+  labelDisplay = new GLabel(this, 40, 210, 260, 260);
   labelDisplay.setText("Hi.");
   labelDisplay.setTextBold();
   labelDisplay.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
@@ -235,14 +239,14 @@ public void createGUI(){
   btnSet180.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
   btnSet180.addEventHandler(this, "btnSet180Click");
   togGroupDegrees = new GToggleGroup();
-  optionDegrees180 = new GOption(this, 290, 340, 50, 40);
+  optionDegrees180 = new GOption(this, 320, 390, 50, 40);
   optionDegrees180.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
   optionDegrees180.setText("180");
   optionDegrees180.setTextBold();
   optionDegrees180.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
   optionDegrees180.setOpaque(true);
   optionDegrees180.addEventHandler(this, "optionDegrees180_clicked1");
-  optionDegrees360 = new GOption(this, 350, 340, 50, 40);
+  optionDegrees360 = new GOption(this, 320, 340, 50, 40);
   optionDegrees360.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
   optionDegrees360.setText("360");
   optionDegrees360.setTextBold();
@@ -252,14 +256,14 @@ public void createGUI(){
   optionDegrees180.setSelected(true);
   togGroupDegrees.addControl(optionDegrees360);
   togGroupSpeed = new GToggleGroup();
-  optionSpeedLow = new GOption(this, 430, 330, 70, 50);
+  optionSpeedLow = new GOption(this, 400, 390, 70, 40);
   optionSpeedLow.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
   optionSpeedLow.setText("Baseline");
   optionSpeedLow.setTextBold();
   optionSpeedLow.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   optionSpeedLow.setOpaque(true);
   optionSpeedLow.addEventHandler(this, "optionSpeedBaseline_clicked1");
-  optionSpeedHigh = new GOption(this, 520, 330, 70, 50);
+  optionSpeedHigh = new GOption(this, 400, 340, 70, 40);
   optionSpeedHigh.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
   optionSpeedHigh.setText("High");
   optionSpeedHigh.setTextBold();

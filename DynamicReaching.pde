@@ -28,12 +28,10 @@ int trialsPerBlock = 40;  // number of rotations per speed setting
 Trial currentTrial;
 static ArrayList<Trial> trialsRun = new ArrayList<Trial>(); // list of finished trials
 static PrintWriter output;
-boolean baselineFlag = false;
-boolean baseline180Flag = false;
 boolean experimentStarted = false;
 
 void setup(){
-  size(600,400);
+  size(600,600);
   createGUI();
   System.out.println("Starting...");
   
