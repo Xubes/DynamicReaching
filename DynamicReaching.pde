@@ -282,7 +282,7 @@ public class Trial{
     this.degrees = degrees;
     this.setting = speedSetting;
     this.complete = false;
-    degrees = (degrees==360)? 1 : 2;
+    spins = (degrees==360)? 1 : 2;
     spinTowards = true;
   }
   
