@@ -17,7 +17,7 @@ double angularVelocity;  // velocity from Arduino
 long lastCommandTime;
 int lastCommand;  // store the last command sent
 int power, brake, direction, degrees2Rotate;
-static final int COMMAND_INTERVAL = 10;  // milliseconds between commands
+static final int COMMAND_INTERVAL = 100;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
