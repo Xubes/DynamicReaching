@@ -62,7 +62,7 @@ void setup(){
   brake = csliderBrake.getValueI();
   direction = CLOCKWISE;
   
-  currentTrial = new Trial(180, LOW); // Default trial is 180 low
+  nextTrial();
 
   // Open output file.
   try{
@@ -369,7 +369,7 @@ public void nextTrial(){
   if(experimentStarted){
     if(currentTrial.degrees == 180){
       nextTrialDegrees = 180;
-      nextTrialSpeed = LOW;
+      nextTrialSpeed = LOW_180;
     }
     else{
       Trial prevTrial = null;
@@ -396,7 +396,7 @@ public void nextTrial(){
       else{
         // Less than 2 spins complete.
         nextTrialDegrees = 180;
-        nextTrialSpeed = LOW;
+        nextTrialSpeed = LOW_180;
       }
     }
     trialsRun.add(currentTrial);

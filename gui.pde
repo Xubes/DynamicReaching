@@ -15,63 +15,122 @@
  */
 
 public void btnResetDeltaClick(GButton source, GEvent event) { //_CODE_:btnResetDelta:933479:
-  println("btnResetDelta - GButton >> GEvent." + event + " @ " + millis());
+//  println("btnResetDelta - GButton >> GEvent." + event + " @ " + millis());
+  resetDelta();
 } //_CODE_:btnResetDelta:933479:
 
 public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123:
-  println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
+//  println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
+  source.setEnabled(false);
+  
+  if(experimentStarted){
+    setTrial(currentTrial);
+  }
+  
+  resetPosition();
+  
+  long startTime = millis();
+  while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
+  
+  System.err.println("Spinning");
+  
+  double startPosition = anglePosition;
+  startTime = millis();
+  if(spin(degrees2Rotate,direction)){
+    double endPosition = anglePosition;
+    double stopTime = millis();
+    double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
+    
+    currentTrial.setResult(startPosition, endPosition, avgVelocity);
+    currentTrial.nextSpin();
+    
+    direction *= -1;  // next spin will go in opposite direction
+    
+    if(currentTrial.isComplete()){
+      nextTrial();
+    }
+  }
+  else{
+    System.err.println("Something happened! Failed to spin!");
+  }
+  
+  System.err.println("Done spinning.");
+  source.setEnabled(true);
 } //_CODE_:btnSpin:521123:
 
 public void csliderBrakeChange(GCustomSlider source, GEvent event) { //_CODE_:csliderBrake:657048:
-  println("csliderBrake - GCustomSlider >> GEvent." + event + " @ " + millis());
+//  println("csliderBrake - GCustomSlider >> GEvent." + event + " @ " + millis());
+  brake = source.getValueI();
 } //_CODE_:csliderBrake:657048:
 
 public void buttonReverseClick(GButton source, GEvent event) { //_CODE_:buttonReverse:305135:
-  println("buttonReverse - GButton >> GEvent." + event + " @ " + millis());
+//  println("buttonReverse - GButton >> GEvent." + event + " @ " + millis());
+  direction *= -1;
 } //_CODE_:buttonReverse:305135:
 
 public void csliderPowerChange(GCustomSlider source, GEvent event) { //_CODE_:csliderPower:301311:
-  println("csliderPower - GCustomSlider >> GEvent." + event + " @ " + millis());
+//  println("csliderPower - GCustomSlider >> GEvent." + event + " @ " + millis());
+  power = source.getValueI();
 } //_CODE_:csliderPower:301311:
 
 public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:buttonResetPosition:614711:
-  println("buttonResetPosition - GButton >> GEvent." + event + " @ " + millis());
+//  println("buttonResetPosition - GButton >> GEvent." + event + " @ " + millis());
+  resetPosition();
 } //_CODE_:buttonResetPosition:614711:
 
 public void btnStartExperimentClicked(GButton source, GEvent event) { //_CODE_:btnStartExperiment:224544:
-  println("btnStartExperiment - GButton >> GEvent." + event + " @ " + millis());
+//  println("btnStartExperiment - GButton >> GEvent." + event + " @ " + millis());
+  experimentStarted = true;
+  optionSpeedLow.setEnabled(false);
+  optionSpeedHigh.setEnabled(false);
+//  togGroupSpeed.setEnabled(false);
 } //_CODE_:btnStartExperiment:224544:
 
 public void buttonSaveClick(GButton source, GEvent event) { //_CODE_:buttonSave:860221:
-  println("buttonSave - GButton >> GEvent." + event + " @ " + millis());
+//  println("buttonSave - GButton >> GEvent." + event + " @ " + millis());
+    selectOutput("Select file to save to.", "saveToFile");
 } //_CODE_:buttonSave:860221:
 
 public void btnSetHighClick(GButton source, GEvent event) { //_CODE_:btnSetHigh:288642:
-  println("btnSetHigh - GButton >> GEvent." + event + " @ " + millis());
+//  println("btnSetHigh - GButton >> GEvent." + event + " @ " + millis());
+  settings[HIGH][0] = power;
+  settings[HIGH][1] = brake;
 } //_CODE_:btnSetHigh:288642:
 
 public void btnSetBaselineClick(GButton source, GEvent event) { //_CODE_:btnSetBaseline:335533:
-  println("btnSetBaseline - GButton >> GEvent." + event + " @ " + millis());
+//  println("btnSetBaseline - GButton >> GEvent." + event + " @ " + millis());
+  settings[LOW][0] = power;
+  settings[LOW][1] = brake;
 } //_CODE_:btnSetBaseline:335533:
 
 public void btnSet180Click(GButton source, GEvent event) { //_CODE_:btnSet180:750451:
-  println("btnSet180 - GButton >> GEvent." + event + " @ " + millis());
+//  println("btnSet180 - GButton >> GEvent." + event + " @ " + millis());
+  settings[LOW_180][0] = power;
+  settings[LOW_180][1] = brake;
 } //_CODE_:btnSet180:750451:
 
 public void optionDegrees180_clicked1(GOption source, GEvent event) { //_CODE_:optionDegrees180:910358:
-  println("optionDegree180 - GOption >> GEvent." + event + " @ " + millis());
+//  println("optionDegree180 - GOption >> GEvent." + event + " @ " + millis());
+  currentTrial.degrees = 180;
+  setTrial(currentTrial);
 } //_CODE_:optionDegrees180:910358:
 
 public void optionDegrees360_clicked1(GOption source, GEvent event) { //_CODE_:optionDegrees360:996744:
-  println("optionDegree360 - GOption >> GEvent." + event + " @ " + millis());
+//  println("optionDegree360 - GOption >> GEvent." + event + " @ " + millis());
+  currentTrial.degrees = 360;
+  setTrial(currentTrial);
 } //_CODE_:optionDegrees360:996744:
 
 public void optionSpeedBaseline_clicked1(GOption source, GEvent event) { //_CODE_:optionSpeedLow:932526:
-  println("optionSpeedBaseline - GOption >> GEvent." + event + " @ " + millis());
+//  println("optionSpeedBaseline - GOption >> GEvent." + event + " @ " + millis());
+  currentTrial.setting = (currentTrial.degrees == 360) ? LOW : LOW_180;
+  setTrial(currentTrial);
 } //_CODE_:optionSpeedLow:932526:
 
 public void optionSpeedHigh_clicked1(GOption source, GEvent event) { //_CODE_:optionSpeedHigh:312837:
-  println("optionSpeedHigh - GOption >> GEvent." + event + " @ " + millis());
+//  println("optionSpeedHigh - GOption >> GEvent." + event + " @ " + millis());
+  currentTrial.setting = HIGH;
+  setTrial(currentTrial);
 } //_CODE_:optionSpeedHigh:312837:
 
 
