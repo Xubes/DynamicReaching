@@ -111,6 +111,7 @@ void draw(){
     displayStr += "\nPrevious spin:\n" + prevTrial.toString2();
   }
   labelDisplay.setText(displayStr);
+  labelDisplay.setFont(new java.awt.Font("Monospaced", java.awt.Font.BOLD, 20));
 }
 
 /* Update angleDelta and angularVelocity whenever data is available on the serial port. */
@@ -401,20 +402,12 @@ public void nextTrial(){
       }
     }
     trialsRun.add(currentTrial);
+    
+    setTrial(new Trial(nextTrialDegrees, nextTrialSpeed));
   }
   else{
-    // Calibration phase
-    int degs = (optionDegrees180.isSelected()) ? 180 : 360;
-    int speed = (optionSpeedLow.isSelected()) ? LOW : HIGH;
-    
-    nextTrialDegrees = degs;
-    nextTrialSpeed = speed;
-    
-    // Special case for LOW_180
-    if(degs == 180 && speed == LOW)
-      nextTrialSpeed = LOW_180;
+    // Calibration phase, just reset spins
+    if(currentTrial == null) setTrial(new Trial(180, LOW_180));
+    else currentTrial.spins = (currentTrial.degrees == 180) ? 2 : 1;
   }
-  
-//  System.err.println(nextTrialDegrees + ", " + nextTrialSpeed);
-  setTrial(new Trial(nextTrialDegrees, nextTrialSpeed));
 }
