@@ -21,7 +21,7 @@ static final int COMMAND_INTERVAL = 10;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-9;
 static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
-static final double EARLY_BRAKE_THRESHOLD = 5.0; // chair will send brake command when within this many degrees of target
+static final double EARLY_BRAKE_THRESHOLD = 0.0; // chair will send brake command when within this many degrees of target
 static final int LOW_180 = 0, LOW = 1, HIGH = 2;
 int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
 int trialsPerBlock = 40;  // number of rotations per speed setting
@@ -229,14 +229,17 @@ boolean spin(int degrees, int direction){
 //  System.err.println("Turning off power");
   
   // Wait until chair stops spinning AND chair has moved (to prevent early exit on short and fast spins).
+  boolean earlyBrake = false;
   while(abs(angularVelocity) >= 2.0  || distance < 10){
     distance = abs(anglePosition-startPosition);
     // Apply brake if distance gte desire
     if(distance >= degrees-EARLY_BRAKE_THRESHOLD){
       sendCommand(0);
+      earlyBrake = true;
     }
     redraw();
   }
+  if(earlyBrake) System.err.println("Used sensor to activate brake early. Please increase brake value.");
 
   return true;
 }
