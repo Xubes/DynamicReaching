@@ -41,7 +41,10 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
     double stopTime = millis();
     double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
     
-    currentTrial.setResult(startPosition, endPosition, avgVelocity);
+    // Set results unless return spin
+    if(!currentTrial.isReturnSpin()){
+      currentTrial.setResult(startPosition, endPosition, avgVelocity);
+    }
     
     if(output != null) output.println(currentTrial);
     
@@ -64,7 +67,7 @@ public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123
 
 public void csliderBrakeChange(GCustomSlider source, GEvent event) { //_CODE_:csliderBrake:657048:
 //  println("csliderBrake - GCustomSlider >> GEvent." + event + " @ " + millis());
-  brake = source.getValueI();
+  if(!experimentStarted) brake = source.getValueI();
 } //_CODE_:csliderBrake:657048:
 
 public void buttonReverseClick(GButton source, GEvent event) { //_CODE_:buttonReverse:305135:
@@ -74,7 +77,7 @@ public void buttonReverseClick(GButton source, GEvent event) { //_CODE_:buttonRe
 
 public void csliderPowerChange(GCustomSlider source, GEvent event) { //_CODE_:csliderPower:301311:
 //  println("csliderPower - GCustomSlider >> GEvent." + event + " @ " + millis());
-  power = source.getValueI();
+  if(!experimentStarted) power = source.getValueI();
 } //_CODE_:csliderPower:301311:
 
 public void buttonResetPositionClick(GButton source, GEvent event) { //_CODE_:buttonResetPosition:614711:
@@ -103,36 +106,61 @@ public void buttonSaveClick(GButton source, GEvent event) { //_CODE_:buttonSave:
 
 public void btnSetHighClick(GButton source, GEvent event) { //_CODE_:btnSetHigh:288642:
 //  println("btnSetHigh - GButton >> GEvent." + event + " @ " + millis());
-  settings[HIGH][0] = power;
-  settings[HIGH][1] = brake;
+  settings[HIGH][0] = csliderPower.getValueI();
+  settings[HIGH][1] = csliderBrake.getValueI();
 } //_CODE_:btnSetHigh:288642:
 
 public void btnSetBaselineClick(GButton source, GEvent event) { //_CODE_:btnSetBaseline:335533:
 //  println("btnSetBaseline - GButton >> GEvent." + event + " @ " + millis());
-  settings[LOW][0] = power;
-  settings[LOW][1] = brake;
+  settings[LOW][0] = csliderPower.getValueI();
+  settings[LOW][1] = csliderBrake.getValueI();
 } //_CODE_:btnSetBaseline:335533:
 
 public void btnSet180Click(GButton source, GEvent event) { //_CODE_:btnSet180:750451:
 //  println("btnSet180 - GButton >> GEvent." + event + " @ " + millis());
-  settings[LOW_180][0] = power;
-  settings[LOW_180][1] = brake;
+  settings[LOW_180][0] = csliderPower.getValueI();
+  settings[LOW_180][1] = csliderBrake.getValueI();
 } //_CODE_:btnSet180:750451:
 
 public void optionDegrees180_clicked1(GOption source, GEvent event) { //_CODE_:optionDegrees180:910358:
 //  println("optionDegree180 - GOption >> GEvent." + event + " @ " + millis());
-  currentTrial.degrees = 180;
-  // switch from low to low180 if needed
-  if(currentTrial.setting == LOW) currentTrial.setting = LOW_180;
-  setTrial(currentTrial);
+  if(experimentStarted){
+    currentTrial.degrees = 180;
+    // Set spins to 2 and complete to false
+    currentTrial.spins = 2;
+    currentTrial.complete = false;
+    
+    // switch setting
+    currentTrial.setting = LOW_180;
+    setTrial(currentTrial);
+  }
+  else{
+    degrees2Rotate = 180;
+    power = csliderPower.getValueI();
+    brake = csliderBrake.getValueI();
+  }
 } //_CODE_:optionDegrees180:910358:
 
 public void optionDegrees360_clicked1(GOption source, GEvent event) { //_CODE_:optionDegrees360:996744:
 //  println("optionDegree360 - GOption >> GEvent." + event + " @ " + millis());
-  currentTrial.degrees = 360;
-  // switch from low180 to low if needed
-  if(currentTrial.setting == LOW_180) currentTrial.setting = LOW;
-  setTrial(currentTrial);
+  if(experimentStarted){
+    currentTrial.degrees = 360;
+    
+    // Set spins to 1 and complete to false
+    currentTrial.spins = 1;
+    currentTrial.complete = false;
+    
+    // switch from low180 to low if needed
+    if(experimentStarted)
+    currentTrial.setting = LOW;
+    setTrial(currentTrial);
+  }
+  else{
+    degrees2Rotate = 360;
+    power = csliderPower.getValueI();
+    brake = csliderBrake.getValueI();
+  }
+
 } //_CODE_:optionDegrees360:996744:
 
 public void optionSpeedBaseline_clicked1(GOption source, GEvent event) { //_CODE_:optionSpeedLow:932526:
