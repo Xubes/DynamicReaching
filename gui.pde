@@ -135,7 +135,8 @@ public void optionDegrees180_clicked1(GOption source, GEvent event) { //_CODE_:o
     setTrial(currentTrial);
   }
   else{
-    degrees2Rotate = 180;
+    setTrial(new Trial(180, LOW_180));
+    // overwrite power and brake settings
     power = csliderPower.getValueI();
     brake = csliderBrake.getValueI();
   }
@@ -156,7 +157,8 @@ public void optionDegrees360_clicked1(GOption source, GEvent event) { //_CODE_:o
     setTrial(currentTrial);
   }
   else{
-    degrees2Rotate = 360;
+    setTrial(new Trial(360, LOW));
+    // overwrite power and brake settings
     power = csliderPower.getValueI();
     brake = csliderBrake.getValueI();
   }
