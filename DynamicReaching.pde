@@ -360,6 +360,8 @@ public static void saveToFile(File file){
   }
   
   printer.close();
+  
+  System.err.println("Done saving.");
 }
 
 /* Updates the global vars to the given trial's parameters. */
