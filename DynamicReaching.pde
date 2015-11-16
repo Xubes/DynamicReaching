@@ -30,6 +30,8 @@ Trial currentTrial;
 static ArrayList<Trial> trialsRun = new ArrayList<Trial>(); // list of finished trials
 static PrintWriter output;
 boolean experimentStarted = false;
+long global_last_spin = 0;
+static final int SPIN_INTERVAL = 100; // ms between spins
 
 void setup(){
   size(600,600);
@@ -428,6 +430,12 @@ public void nextTrial(){
 
 /* Routine to execute on clicking spin button */
 public synchronized void btnSpinClick2(){
+  // Check if at least SPIN_INTERVAL has passed since global_last_spin
+  if(millis() - global_last_spin < SPIN_INTERVAL){
+    System.err.println("Not enough time since last spin.");
+    return;
+  }
+  
   if(experimentStarted){
     setTrial(currentTrial);
   }
@@ -461,6 +469,8 @@ public synchronized void btnSpinClick2(){
       nextTrial();
     }
     
+    // Update global_last_spin
+    global_last_spin = millis();
   }
   else{
     System.err.println("Something happened! Failed to spin!");
@@ -473,6 +483,8 @@ public synchronized void btnSpinClick2(){
 void keyReleased(){
   // Spin button routine on KEY_SPIN
   if(key == SPIN_KEY){
+    btnSpin.setEnabled(false);
     btnSpinClick2();
+    btnSpin.setEnabled(true);
   }
 }
