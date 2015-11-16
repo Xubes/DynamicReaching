@@ -23,13 +23,15 @@ static final double EPS = 1e-3;
 static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
 static final double EARLY_BRAKE_THRESHOLD = -10.0; // chair will send brake command when within this many degrees of target
 static final int LOW_180 = 0, LOW = 1, HIGH = 2;
-static final int SPIN_KEY = 32;
 int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
 int trialsPerBlock = 40;  // number of rotations per speed setting
 Trial currentTrial;
 static ArrayList<Trial> trialsRun = new ArrayList<Trial>(); // list of finished trials
 static PrintWriter output;
 boolean experimentStarted = false;
+
+static final int SPIN_KEY = 32;
+static final int DEGREE_SWAP_KEY = 's';
 long global_last_spin = 0;
 static final int SPIN_INTERVAL = 100; // ms between spins
 
@@ -479,12 +481,68 @@ public synchronized void btnSpinClick2(){
   System.err.println("Done spinning.");
 }
 
+/* Switch to 180 degree spins. */
+void optionDegrees180Click2(){
+    if(experimentStarted){
+    currentTrial.degrees = 180;
+    // Set spins to 2 and complete to false
+    currentTrial.spins = 2;
+    currentTrial.complete = false;
+    
+    // switch setting
+    currentTrial.setting = LOW_180;
+    setTrial(currentTrial);
+  }
+  else{
+    setTrial(new Trial(180, LOW_180));
+    // overwrite power and brake settings
+    power = csliderPower.getValueI();
+    brake = csliderBrake.getValueI();
+  }
+}
+
+/* Switch to 360 degree spins. */
+void optionDegrees360Click2(){
+    if(experimentStarted){
+    currentTrial.degrees = 360;
+    
+    // Set spins to 1 and complete to false
+    currentTrial.spins = 1;
+    currentTrial.complete = false;
+    
+    // switch from low180 to low if needed
+    if(experimentStarted)
+    currentTrial.setting = LOW;
+    setTrial(currentTrial);
+  }
+  else{
+    setTrial(new Trial(360, LOW));
+    // overwrite power and brake settings
+    power = csliderPower.getValueI();
+    brake = csliderBrake.getValueI();
+  }
+}
+
 /* Handle key release events. */
 void keyReleased(){
   // Spin button routine on KEY_SPIN
-  if(key == SPIN_KEY){
-    btnSpin.setEnabled(false);
-    btnSpinClick2();
-    btnSpin.setEnabled(true);
+  switch(key){
+    case SPIN_KEY:
+      btnSpin.setEnabled(false);
+      btnSpinClick2();
+      btnSpin.setEnabled(true);
+      break;
+    case DEGREE_SWAP_KEY:
+      if(optionDegrees180.isSelected()){
+        optionDegrees180.setSelected(false);
+        optionDegrees360.setSelected(true);
+        optionDegrees360Click2();
+      }
+      else{
+        optionDegrees360.setSelected(false);
+        optionDegrees180.setSelected(true);
+        optionDegrees180Click2();
+      }
+      break;
   }
 }

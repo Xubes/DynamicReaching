@@ -85,45 +85,12 @@ public void btnSet180Click(GButton source, GEvent event) { //_CODE_:btnSet180:75
 
 public void optionDegrees180_clicked1(GOption source, GEvent event) { //_CODE_:optionDegrees180:910358:
 //  println("optionDegree180 - GOption >> GEvent." + event + " @ " + millis());
-  if(experimentStarted){
-    currentTrial.degrees = 180;
-    // Set spins to 2 and complete to false
-    currentTrial.spins = 2;
-    currentTrial.complete = false;
-    
-    // switch setting
-    currentTrial.setting = LOW_180;
-    setTrial(currentTrial);
-  }
-  else{
-    setTrial(new Trial(180, LOW_180));
-    // overwrite power and brake settings
-    power = csliderPower.getValueI();
-    brake = csliderBrake.getValueI();
-  }
+  optionDegrees180Click2();
 } //_CODE_:optionDegrees180:910358:
 
 public void optionDegrees360_clicked1(GOption source, GEvent event) { //_CODE_:optionDegrees360:996744:
 //  println("optionDegree360 - GOption >> GEvent." + event + " @ " + millis());
-  if(experimentStarted){
-    currentTrial.degrees = 360;
-    
-    // Set spins to 1 and complete to false
-    currentTrial.spins = 1;
-    currentTrial.complete = false;
-    
-    // switch from low180 to low if needed
-    if(experimentStarted)
-    currentTrial.setting = LOW;
-    setTrial(currentTrial);
-  }
-  else{
-    setTrial(new Trial(360, LOW));
-    // overwrite power and brake settings
-    power = csliderPower.getValueI();
-    brake = csliderBrake.getValueI();
-  }
-
+  optionDegrees360Click2();
 } //_CODE_:optionDegrees360:996744:
 
 public void optionSpeedBaseline_clicked1(GOption source, GEvent event) { //_CODE_:optionSpeedLow:932526:
