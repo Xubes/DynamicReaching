@@ -424,3 +424,46 @@ public void nextTrial(){
     else currentTrial.spins = (currentTrial.degrees == 360)? 1 : 2;
   }
 }
+
+/* Routine to execute on clicking spin button */
+public synchronized void btnSpinClick2(){
+  if(experimentStarted){
+    setTrial(currentTrial);
+  }
+  
+  resetPosition();
+  
+  long startTime = millis();
+  while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
+  
+  System.err.println("Spinning");
+  
+  double startPosition = anglePosition;
+  startTime = millis();
+  if(spin(degrees2Rotate,direction)){
+    double endPosition = anglePosition;
+    double stopTime = millis();
+    double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
+    
+    // Set results unless return spin
+    if(!currentTrial.isReturnSpin()){
+      currentTrial.setResult(startPosition, endPosition, avgVelocity);
+    }
+    
+    if(output != null) output.println(currentTrial);
+    
+    currentTrial.nextSpin();
+    
+    direction *= -1;  // next spin will go in opposite direction
+    
+    if(currentTrial.isComplete()){
+      nextTrial();
+    }
+    
+  }
+  else{
+    System.err.println("Something happened! Failed to spin!");
+  }
+  
+  System.err.println("Done spinning.");
+}

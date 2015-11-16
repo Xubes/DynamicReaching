@@ -22,46 +22,7 @@ public void btnResetDeltaClick(GButton source, GEvent event) { //_CODE_:btnReset
 public void btnSpinClick(GButton source, GEvent event) { //_CODE_:btnSpin:521123:
 //  println("btnSpin - GButton >> GEvent." + event + " @ " + millis());
   source.setEnabled(false);
-  
-  if(experimentStarted){
-    setTrial(currentTrial);
-  }
-  
-  resetPosition();
-  
-  long startTime = millis();
-  while(millis()-startTime<100){}; // busy wait 100 millis to let sensor update
-  
-  System.err.println("Spinning");
-  
-  double startPosition = anglePosition;
-  startTime = millis();
-  if(spin(degrees2Rotate,direction)){
-    double endPosition = anglePosition;
-    double stopTime = millis();
-    double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
-    
-    // Set results unless return spin
-    if(!currentTrial.isReturnSpin()){
-      currentTrial.setResult(startPosition, endPosition, avgVelocity);
-    }
-    
-    if(output != null) output.println(currentTrial);
-    
-    currentTrial.nextSpin();
-    
-    direction *= -1;  // next spin will go in opposite direction
-    
-    if(currentTrial.isComplete()){
-      nextTrial();
-    }
-    
-  }
-  else{
-    System.err.println("Something happened! Failed to spin!");
-  }
-  
-  System.err.println("Done spinning.");
+  btnSpinClick2();
   source.setEnabled(true);
 } //_CODE_:btnSpin:521123:
 
