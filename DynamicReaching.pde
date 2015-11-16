@@ -23,6 +23,7 @@ static final double EPS = 1e-3;
 static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
 static final double EARLY_BRAKE_THRESHOLD = -10.0; // chair will send brake command when within this many degrees of target
 static final int LOW_180 = 0, LOW = 1, HIGH = 2;
+static final int SPIN_KEY = 32;
 int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
 int trialsPerBlock = 40;  // number of rotations per speed setting
 Trial currentTrial;
@@ -466,4 +467,12 @@ public synchronized void btnSpinClick2(){
   }
   
   System.err.println("Done spinning.");
+}
+
+/* Handle key release events. */
+void keyReleased(){
+  // Spin button routine on KEY_SPIN
+  if(key == SPIN_KEY){
+    btnSpinClick2();
+  }
 }
