@@ -482,7 +482,7 @@ public synchronized void btnSpinClick2(){
 }
 
 /* Switch to 180 degree spins. */
-void optionDegrees180Click2(){
+void synchronized optionDegrees180Click2(){
     if(experimentStarted){
     currentTrial.degrees = 180;
     // Set spins to 2 and complete to false
@@ -502,7 +502,7 @@ void optionDegrees180Click2(){
 }
 
 /* Switch to 360 degree spins. */
-void optionDegrees360Click2(){
+void synchronized optionDegrees360Click2(){
     if(experimentStarted){
     currentTrial.degrees = 360;
     
