@@ -54,9 +54,6 @@ public void btnStartExperimentClicked(GButton source, GEvent event) { //_CODE_:b
   optionSpeedLow.setSelected(true);
   optionDegrees180.setSelected(true);
   
-  optionSpeedLow.setEnabled(false);
-  optionSpeedHigh.setEnabled(false);
-  
   setTrial(new Trial(180, LOW_180));
 } //_CODE_:btnStartExperiment:224544:
 
@@ -92,18 +89,6 @@ public void optionDegrees360_clicked1(GOption source, GEvent event) { //_CODE_:o
 //  println("optionDegree360 - GOption >> GEvent." + event + " @ " + millis());
   optionDegrees360Click2();
 } //_CODE_:optionDegrees360:996744:
-
-public void optionSpeedBaseline_clicked1(GOption source, GEvent event) { //_CODE_:optionSpeedLow:932526:
-//  println("optionSpeedBaseline - GOption >> GEvent." + event + " @ " + millis());
-  currentTrial.setting = (currentTrial.degrees == 360) ? LOW : LOW_180;
-  setTrial(currentTrial);
-} //_CODE_:optionSpeedLow:932526:
-
-public void optionSpeedHigh_clicked1(GOption source, GEvent event) { //_CODE_:optionSpeedHigh:312837:
-//  println("optionSpeedHigh - GOption >> GEvent." + event + " @ " + millis());
-  currentTrial.setting = HIGH;
-  setTrial(currentTrial);
-} //_CODE_:optionSpeedHigh:312837:
 
 
 
@@ -214,23 +199,6 @@ public void createGUI(){
   optionDegrees180.setSelected(true);
   togGroupDegrees.addControl(optionDegrees360);
   togGroupSpeed = new GToggleGroup();
-  optionSpeedLow = new GOption(this, 400, 390, 70, 40);
-  optionSpeedLow.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
-  optionSpeedLow.setText("Baseline");
-  optionSpeedLow.setTextBold();
-  optionSpeedLow.setLocalColorScheme(GCScheme.GREEN_SCHEME);
-  optionSpeedLow.setOpaque(true);
-  optionSpeedLow.addEventHandler(this, "optionSpeedBaseline_clicked1");
-  optionSpeedHigh = new GOption(this, 400, 340, 70, 40);
-  optionSpeedHigh.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
-  optionSpeedHigh.setText("High");
-  optionSpeedHigh.setTextBold();
-  optionSpeedHigh.setLocalColorScheme(GCScheme.RED_SCHEME);
-  optionSpeedHigh.setOpaque(true);
-  optionSpeedHigh.addEventHandler(this, "optionSpeedHigh_clicked1");
-  togGroupSpeed.addControl(optionSpeedLow);
-  optionSpeedLow.setSelected(true);
-  togGroupSpeed.addControl(optionSpeedHigh);
 }
 
 // Variable declarations 
@@ -254,6 +222,4 @@ GToggleGroup togGroupDegrees;
 GOption optionDegrees180; 
 GOption optionDegrees360; 
 GToggleGroup togGroupSpeed; 
-GOption optionSpeedLow; 
-GOption optionSpeedHigh; 
 
