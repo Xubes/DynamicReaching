@@ -237,8 +237,9 @@ boolean spin(int degrees, int direction){
   int interval = 10; // ms interval
   long tstart = millis();
   while(abs(angularVelocity) >= 2.0){
-    if(millis() - tstart < interval) continue;
+//    if(millis() - tstart < interval) continue;
     distance = abs(anglePosition-startPosition);
+    redraw();
     // Apply brake if distance gte desire
     if(distance >= abs(degrees-EARLY_BRAKE_THRESHOLD)){
       sendCommandF(0);
