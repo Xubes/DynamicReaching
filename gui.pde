@@ -51,7 +51,6 @@ public void btnStartExperimentClicked(GButton source, GEvent event) { //_CODE_:b
   source.setEnabled(false);
   
   experimentStarted = true;
-  optionSpeedLow.setSelected(true);
   optionDegrees180.setSelected(true);
   
   setTrial(new Trial(180, LOW_180));
