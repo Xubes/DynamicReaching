@@ -234,10 +234,10 @@ boolean spin(int degrees, int direction){
   
   // Wait until chair stops spinning AND chair has moved (to prevent early exit on short and fast spins).
   boolean earlyBrake = false;
-  int interval = 10; // ms interval
+  int interval = 100; // ms interval
   long tstart = millis();
   while(abs(angularVelocity) >= 2.0){
-//    if(millis() - tstart < interval) continue;
+    if(millis() - tstart < interval) continue;
     distance = abs(anglePosition-startPosition);
     redraw();
     // Apply brake if distance gte desire
@@ -246,9 +246,11 @@ boolean spin(int degrees, int direction){
       earlyBrake = true;
     }
     tstart = millis();
+//    System.err.format("Waiting for stop... distance: %.3f, velocity: %.3f\n, time: %d", distance, angularVelocity, millis());
   }
   if(earlyBrake) System.err.println("Used sensor to activate brake early. Please increase brake value.");
 
+//  System.err.println("Spin finished");
   return true;
 }
 
