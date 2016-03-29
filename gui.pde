@@ -33,7 +33,7 @@ public void csliderBrakeChange(GCustomSlider source, GEvent event) { //_CODE_:cs
 
 public void buttonReverseClick(GButton source, GEvent event) { //_CODE_:buttonReverse:305135:
 //  println("buttonReverse - GButton >> GEvent." + event + " @ " + millis());
-  direction *= -1;
+  reverseDirection();
 } //_CODE_:buttonReverse:305135:
 
 public void csliderPowerChange(GCustomSlider source, GEvent event) { //_CODE_:csliderPower:301311:

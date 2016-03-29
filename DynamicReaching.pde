@@ -32,6 +32,7 @@ boolean experimentStarted = false;
 
 static final int SPIN_KEY = 32;
 static final int DEGREE_SWAP_KEY = 's';
+static final int REVERSE_KEY = 'r';
 long global_last_spin = 0;
 static final int SPIN_INTERVAL = 100; // ms between spins
 
@@ -526,6 +527,9 @@ synchronized void optionDegrees360Click2(){
   }
 }
 
+synchronized void reverseDirection(){
+    direction *= -1;
+}
 /* Handle key release events. */
 void keyReleased(){
   // Spin button routine on KEY_SPIN
@@ -546,6 +550,9 @@ void keyReleased(){
         optionDegrees180.setSelected(true);
         optionDegrees180Click2();
       }
+      break;
+    case REVERSE_KEY:
+      reverseDirection();
       break;
   }
 }
