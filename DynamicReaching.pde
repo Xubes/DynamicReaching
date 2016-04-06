@@ -469,10 +469,9 @@ public synchronized void btnSpinClick2(){
     
     currentTrial.nextSpin();
     
-    direction *= -1;  // next spin will go in opposite direction
-    
     if(currentTrial.isComplete()){
       nextTrial();
+      direction *= -1;  // next trial goes in opposite direction
     }
     
     // Update global_last_spin
