@@ -16,25 +16,23 @@ double angleDelta;  // absolute degrees rotation since last reset, from Arduino
 double angularVelocity;  // velocity from Arduino
 long lastCommandTime;
 int lastCommand;  // store the last command sent
-int power, brake, direction, degrees2Rotate;
+int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
+int trialsPerBlock = 40;  // number of rotations per speed setting
+Trial currentTrial;
+static PrintWriter output;
+long global_last_spin = 0;
+
+// Constants
+static final int SPIN_KEY = 32;
+static final int DEGREE_SWAP_KEY = (int)'s';
+static final int REVERSE_KEY = (int)'r';
+static final int SPIN_INTERVAL = 100; // ms between spins
 static final int COMMAND_INTERVAL = 50;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
 static final double EPS = 1e-3;
 static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
 static final double EARLY_BRAKE_THRESHOLD = -10.0; // chair will send brake command when within this many degrees of target
 static final int LOW_180 = 0, LOW = 1, HIGH = 2;
-int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
-int trialsPerBlock = 40;  // number of rotations per speed setting
-Trial currentTrial;
-static ArrayList<Trial> trialsRun = new ArrayList<Trial>(); // list of finished trials
-static PrintWriter output;
-boolean experimentStarted = false;
-
-static final int SPIN_KEY = 32;
-static final int DEGREE_SWAP_KEY = 's';
-static final int REVERSE_KEY = 'r';
-long global_last_spin = 0;
-static final int SPIN_INTERVAL = 100; // ms between spins
 
 void setup(){
   size(600,600);
@@ -62,9 +60,7 @@ void setup(){
   angleDelta = 0.0;
   angularVelocity = 0.0;
   lastCommandTime = millis();
-  power = csliderPower.getValueI();
-  brake = csliderBrake.getValueI();
-  direction = CLOCKWISE;
+  currentTrial = new Trial(csliderPower.getValueI(), csliderBrake.getValuei());
   
   nextTrial();
 
@@ -100,21 +96,7 @@ void draw(){
   }
   labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f\n%s",anglePosition, angleDelta,angularVelocity, sb.toString()));
   
-  String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
-  
-  if(currentTrial!=null){
-    //displayStr += String.format("\nTrial:\t%d, %d", currentTrial.degrees, currentTrial.direction);
-    displayStr += "\n" + currentTrial.toString2();
-  }
-  else{
-    displayStr += "\n" + degrees2Rotate;
-  }
-  
-  if(trialsRun.size() > 0){
-    Trial prevTrial = trialsRun.get(trialsRun.size() - 1);
-    displayStr += "\nPrevious spin:\n" + prevTrial.toString2();
-  }
-  labelDisplay.setText(displayStr);
+  labelDisplay.setText(expController.getDisplayStr());
   labelDisplay.setFont(new java.awt.Font("Monospaced", java.awt.Font.BOLD, 20));
 }
 
@@ -173,7 +155,7 @@ boolean spin180(int direction){
 /* The generalized version of spin180 for other degree settings.
     Note that there is a lower limit to the number of degrees the chair can spin.
 */
-boolean spin(int degrees, int direction){
+boolean spin(int degrees, int direction, int power, int brake){
   // Command to motor; magnitude is power, sign is direction.
   int command = power*direction;
   
@@ -283,8 +265,18 @@ double abs(double x){
   return Math.abs(x);
 }
 
+/* Class to hold information about a single spin of the chair.
+   A spin consists of the chair rotating some number of degrees in some direction. */
+public class Spin{
+  int direction,  degrees;
+  
+  public Spin(int dir, int deg){
+    direction = dir;
+    degrees = deg;
+  }
+}
 
-/* Class to hold information about each trial.  For now the degrees turn and direction of turn. */
+/* Class to hold information about each trial. A trial consists of a series of spins. */
 public class Trial{
   // Note direction is always spin direction towards target
   public int ordinal, degrees, direction, setting;
@@ -292,6 +284,7 @@ public class Trial{
   public double initPosTowards, termPosTowards, initPosReturn, termPosReturn;
   public boolean complete, spinTowards;
   public int spins;  // remaining spins
+  ArrayList<Spin> spinlist;
   
   public Trial(int degrees, int speedSetting){
     this.degrees = degrees;
@@ -386,7 +379,56 @@ public void setTrial(Trial t){
   }
 }
 
+class Experiment{
+  static Phase calibration;
+  
+  ArrayList<Trial> trialsRun;; // list of finished trials
+  private Phase phase;
+  
+  public Experiment(Phase s, ArrayList<Trial> tr){
+    phase = s;
+    trialsRun = tr;
+  }
+  
+  public Experiment(){
+    this(calibration, new ArrayList<Trial>());
+  }
+  
+  public void setPhase(Phase p){
+    phase = p;
+  }
+}
+
+class Phase{
+ Trial currentTrial; 
+ int direction, power, brake;
+ 
+ public Phase(int dir, int pval, int bval){
+   direction = dir;
+   power = pval;
+   brake = bval;
+ }
+ 
+ public String getDisplayString(){
+    String displayStr = String.format("Next spin: %s",(direction==1)? "CW" : "CCW");
+    
+    if(currentTrial!=null){
+      displayStr += "\n" + currentTrial.toString2();
+    }
+    else{
+      displayStr += "\n" + degrees2Rotate;
+    }
+    
+    if(trialsRun.size() > 0){
+      Trial prevTrial = trialsRun.get(trialsRun.size() - 1);
+      displayStr += "\nPrevious spin:\n" + prevTrial.toString2();
+    }
+  }
+}
+
 /* Generate next trial. */
+boolean expPhase1Complete = false; //baseline + 2 360 slow trials
+boolean expPhase2Complete = false; // baseline + 2 360 fast trials
 public void nextTrial(){
   int nextTrialDegrees = 180, nextTrialSpeed = LOW_180;
   
