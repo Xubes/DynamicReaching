@@ -1,9 +1,11 @@
 #!/bin/bash
 
-actionbot="${HOME}/actionbot/src/actionbot"
+robocommander="${HOME}/Documents/workspace/robocommander/Release/robocommander"
 dynreach="${HOME}/Documents/Processing/DynamicReaching/application.linux64/DynamicReaching"
-portL=`ls /dev | egrep "cu.usbmodem\d+"`
-portR='/dev/cu.usbmodemRTQ0011'
+portL="/dev/`ls /dev | egrep 'cu.usbmodem\d+'`"
+portL=' '
+#portR='/dev/cu.usbmodemRTQ0011'
+portR=' '
 portC='/dev/cu.usbmodemfd1241'
 
-"$dynreach" | "$actionbot" "/dev/${portL}" "$portR" "$portC"
+"$dynreach" | "$robocommander" "/dev/${portL}" "$portR" "$portC"
