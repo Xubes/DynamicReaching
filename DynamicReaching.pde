@@ -60,17 +60,12 @@ void setup(){
   angleDelta = 0.0;
   angularVelocity = 0.0;
   lastCommandTime = millis();
-  currentTrial = new Trial(csliderPower.getValueI(), csliderBrake.getValuei());
+  currentTrial = new Trial(csliderPower.getValueI(), csliderBrake.getValueI());
   
   nextTrial();
 
   // Open output file.
-  try{
-    output = createWriter("DynamicReachingOutput/DynamicReaching" + System.currentTimeMillis() + ".csv");
-  }
-  catch(FileNotFoundException e){
-    System.err.println(e);
-  }
+  output = createWriter("DynamicReachingOutput/DynamicReaching" + System.currentTimeMillis() + ".csv");
   
   // Send shutdown commands to motor on exit.
   Thread exitHook = new Thread(){
