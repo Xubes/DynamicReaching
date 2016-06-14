@@ -66,7 +66,7 @@ void setup(){
 
   // Open output file.
   try{
-    output = new PrintWriter("DynamicReachingOutput/DynamicReaching" + System.currentTimeMillis() + ".csv");
+    output = createWriter("DynamicReachingOutput/DynamicReaching" + System.currentTimeMillis() + ".csv");
   }
   catch(FileNotFoundException e){
     System.err.println(e);
