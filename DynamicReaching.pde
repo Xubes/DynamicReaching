@@ -16,11 +16,12 @@ double angleDelta;  // absolute degrees rotation since last reset, from Arduino
 double angularVelocity;  // velocity from Arduino
 long lastCommandTime;
 int lastCommand;  // store the last command sent
-int[][] settings = { {50, 0}, {50, 0}, {50, 0} };
+int[][] settings = { {50, 0}, {50, 0}, {50, 0}, {50, 50} };
 int trialsPerBlock = 40;  // number of rotations per speed setting
 Trial currentTrial;
 static PrintWriter output;
 long global_last_spin = 0;
+double lastSpinAvgVelocity = -1;
 
 // Constants
 static final int SPIN_KEY = 32;
@@ -93,6 +94,8 @@ void draw(){
   
   labelDisplay.setText(expController.getDisplayStr());
   labelDisplay.setFont(new java.awt.Font("Monospaced", java.awt.Font.BOLD, 20));
+  labelSpeed.setText(lSting.format("%.2f", lastSpinAvgVelocity)
+  
 }
 
 /* Update angleDelta and angularVelocity whenever data is available on the serial port. */
@@ -497,6 +500,8 @@ public synchronized void btnSpinClick2(){
     double stopTime = millis();
     double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
     
+    lastSpinAvgVelocity = avgVelocity;
+    
     // Set results unless return spin
     if(!currentTrial.isReturnSpin()){
       currentTrial.setResult(startPosition, endPosition, avgVelocity);
@@ -510,6 +515,7 @@ public synchronized void btnSpinClick2(){
       nextTrial();
       direction *= -1;  // next trial goes in opposite direction
     }
+    
     
     // Update global_last_spin
     global_last_spin = millis();

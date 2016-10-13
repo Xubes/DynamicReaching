@@ -198,6 +198,10 @@ public void createGUI(){
   optionDegrees180.setSelected(true);
   togGroupDegrees.addControl(optionDegrees360);
   togGroupSpeed = new GToggleGroup();
+  labelSpeed = new GLabel(this, 490, 510, 100, 40);
+  labelSpeed.setText("Speed");
+  labelSpeed.setTextBold();
+  labelSpeed.setOpaque(true);
 }
 
 // Variable declarations 
@@ -221,4 +225,5 @@ GToggleGroup togGroupDegrees;
 GOption optionDegrees180; 
 GOption optionDegrees360; 
 GToggleGroup togGroupSpeed; 
+GLabel labelSpeed; 
 
