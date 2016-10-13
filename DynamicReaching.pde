@@ -9,6 +9,17 @@ Each trial consists of two rotations: 180 degrees in one direction and then anot
 opposite direction to return the chair facing the starting location.
 Must be able to maintain precision in 60+ trials.
 */
+// Constants
+static final int SPIN_KEY = 32;
+static final int DEGREE_SWAP_KEY = (int)'s';
+static final int REVERSE_KEY = (int)'r';
+static final int SPIN_INTERVAL = 100; // ms between spins
+static final int COMMAND_INTERVAL = 10;  // milliseconds between commands
+static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
+static final double EPS = 1e-3;
+static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
+static final double EARLY_BRAKE_THRESHOLD = -10.0; // chair will send brake command when within this many degrees of target
+static final int LOW_180 = 0, LOW = 1, HIGH = 2;
 
 Serial serialPort;
 double anglePosition;  // angle position from Arduino
@@ -17,23 +28,16 @@ double angularVelocity;  // velocity from Arduino
 long lastCommandTime;
 int lastCommand;  // store the last command sent
 int[][] settings = { {50, 0}, {50, 0}, {50, 0}, {50, 50} };
-int trialsPerBlock = 40;  // number of rotations per speed setting
 Trial currentTrial;
 static PrintWriter output;
 long global_last_spin = 0;
 double lastSpinAvgVelocity = -1;
-
-// Constants
-static final int SPIN_KEY = 32;
-static final int DEGREE_SWAP_KEY = (int)'s';
-static final int REVERSE_KEY = (int)'r';
-static final int SPIN_INTERVAL = 100; // ms between spins
-static final int COMMAND_INTERVAL = 50;  // milliseconds between commands
-static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
-static final double EPS = 1e-3;
-static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
-static final double EARLY_BRAKE_THRESHOLD = -10.0; // chair will send brake command when within this many degrees of target
-static final int LOW_180 = 0, LOW = 1, HIGH = 2;
+static ArrayList<Trial> trialsRun; // list of finished trials
+static int degrees2Rotate = 180;
+static int power = 50;
+static int brake = 0;
+static boolean experimentStarted = false;
+static int direction = CLOCKWISE;
 
 void setup(){
   size(600,600);
@@ -92,9 +96,9 @@ void draw(){
   }
   labelSensorInfo.setText(String.format("Position: %.3f\nDelta: %.3f\nVelocity: %.3f\n%s",anglePosition, angleDelta,angularVelocity, sb.toString()));
   
-  labelDisplay.setText(expController.getDisplayStr());
+  labelDisplay.setText(currentTrial.toString2());
   labelDisplay.setFont(new java.awt.Font("Monospaced", java.awt.Font.BOLD, 20));
-  labelSpeed.setText(lSting.format("%.2f", lastSpinAvgVelocity)
+  labelSpeed.setText(String.format("%.2f", lastSpinAvgVelocity));
   
 }
 
@@ -138,21 +142,10 @@ double sign(double n){
   else return 0.0;
 }
 
-/* Spin the chair 180 degrees. Sends motor commands to standard output which should be piped
+/* Spin the chair. Sends motor commands to standard output which should be piped
     to the actionbot program.
    Direction specifies direction of spin: positive for clockwise.
-   Speed is the minimum degrees per second at which to rotate the chair. Motor power will be
-   adjusted until the rotation speed equals or exceeds the given speed.
-   Speed will be overridden if the desired speed cannot be achieved with the given acceleration
-   for a 180 degree rotation.
  */
-boolean spin180(int direction){
-  return spin(180,direction);
-}
-
-/* The generalized version of spin180 for other degree settings.
-    Note that there is a lower limit to the number of degrees the chair can spin.
-*/
 boolean spin(int degrees, int direction, int power, int brake){
   // Command to motor; magnitude is power, sign is direction.
   int command = power*direction;
@@ -174,7 +167,7 @@ boolean spin(int degrees, int direction, int power, int brake){
   
   // Send initial command to start moving.
 //  System.err.println("Sending initial command");
-  sendCommandF(command);
+  sendCommand(command);
   
   // Wait until acceleration is detected.
 //  System.err.println("Waiting for motion");
@@ -377,19 +370,16 @@ public void setTrial(Trial t){
   }
 }
 
+/*(
 class Experiment{
-  static Phase calibration;
+  Phase calibration;
   
-  ArrayList<Trial> trialsRun;; // list of finished trials
+  ArrayList<Trial> trialsRun; // list of finished trials
   private Phase phase;
   
   public Experiment(Phase s, ArrayList<Trial> tr){
     phase = s;
     trialsRun = tr;
-  }
-  
-  public Experiment(){
-    this(calibration, new ArrayList<Trial>());
   }
   
   public void setPhase(Phase p){
@@ -423,10 +413,8 @@ class Phase{
     }
   }
 }
-
+*/
 /* Generate next trial. */
-boolean expPhase1Complete = false; //baseline + 2 360 slow trials
-boolean expPhase2Complete = false; // baseline + 2 360 fast trials
 public void nextTrial(){
   int nextTrialDegrees = 180, nextTrialSpeed = LOW_180;
   
@@ -495,7 +483,7 @@ public synchronized void btnSpinClick2(){
   
   double startPosition = anglePosition;
   startTime = millis();
-  if(spin(degrees2Rotate,direction)){
+  if(spin(degrees2Rotate,direction, power, brake)){
     double endPosition = anglePosition;
     double stopTime = millis();
     double avgVelocity = 1000 * Math.abs( (endPosition-startPosition)/(stopTime-startTime));
