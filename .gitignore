@@ -2,6 +2,7 @@ application.linux32
 application.linux64
 actionbot
 DynamicReaching.txt
+DynamicReachingOutput/
 TestRuns/
 .DS_Store
 Test.sh
