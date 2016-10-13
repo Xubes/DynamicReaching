@@ -10,9 +10,6 @@ opposite direction to return the chair facing the starting location.
 Must be able to maintain precision in 60+ trials.
 */
 // Constants
-static final int SPIN_KEY = 32;
-static final int DEGREE_SWAP_KEY = (int)'s';
-static final int REVERSE_KEY = (int)'r';
 static final int SPIN_INTERVAL = 100; // ms between spins
 static final int COMMAND_INTERVAL = 10;  // milliseconds between commands
 static final int CLOCKWISE = 1, COUNTERCLOCKWISE = -1;
@@ -20,6 +17,9 @@ static final double EPS = 1e-3;
 static final double CHAIR_START_SAFETY = 2.0; // chair will not spin if it's current velocity is above this value
 static final double EARLY_BRAKE_THRESHOLD = -10.0; // chair will send brake command when within this many degrees of target
 static final int LOW_180 = 0, LOW = 1, HIGH = 2;
+static final int SPIN_KEY = 32;
+static final int DEGREE_SWAP_KEY = (int)'s';
+static final int REVERSE_KEY = (int)'r';
 
 Serial serialPort;
 double anglePosition;  // angle position from Arduino
@@ -563,26 +563,44 @@ synchronized void reverseDirection(){
 /* Handle key release events. */
 void keyReleased(){
   // Spin button routine on KEY_SPIN
-  switch(key){
-    case SPIN_KEY:
-      btnSpin.setEnabled(false);
-      btnSpinClick2();
-      btnSpin.setEnabled(true);
-      break;
-    case DEGREE_SWAP_KEY:
-      if(optionDegrees180.isSelected()){
-        optionDegrees180.setSelected(false);
-        optionDegrees360.setSelected(true);
-        optionDegrees360Click2();
-      }
-      else{
-        optionDegrees360.setSelected(false);
-        optionDegrees180.setSelected(true);
-        optionDegrees180Click2();
-      }
-      break;
-    case REVERSE_KEY:
-      reverseDirection();
-      break;
+  if(key == CODED){
+    switch(keyCode){
+      case UP:
+        csliderPower.setValue(csliderPower.getValueI() + 1);
+        break;
+      case DOWN:
+        csliderPower.setValue(csliderPower.getValueI() - 1);
+        break;
+      case LEFT:
+        csliderBrake.setValue(csliderBrake.getValueI() - 1);
+        break;
+      case RIGHT:
+        csliderBrake.setValue(csliderBrake.getValueI() + 1);
+        break;
+    }
+  }
+  else{   
+    switch(key){
+      case SPIN_KEY:
+        btnSpin.setEnabled(false);
+        btnSpinClick2();
+        btnSpin.setEnabled(true);
+        break;
+      case DEGREE_SWAP_KEY:
+        if(optionDegrees180.isSelected()){
+          optionDegrees180.setSelected(false);
+          optionDegrees360.setSelected(true);
+          optionDegrees360Click2();
+        }
+        else{
+          optionDegrees360.setSelected(false);
+          optionDegrees180.setSelected(true);
+          optionDegrees180Click2();
+        }
+        break;
+      case REVERSE_KEY:
+        reverseDirection();
+        break;
+    }
   }
 }
